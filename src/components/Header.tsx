@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -14,11 +15,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 
@@ -54,7 +53,7 @@ export default function Header() {
               <NavigationMenuList>
                 {navLinks.map((link) => (
                   <NavigationMenuItem key={link.href}>
-                    <Link href={link.href} legacyBehavior passHref>
+                    <Link href={link.href}>
                       <NavigationMenuLink
                         className={navigationMenuTriggerStyle()}
                         active={pathname === link.href}
@@ -64,27 +63,22 @@ export default function Header() {
                     </Link>
                   </NavigationMenuItem>
                 ))}
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger>Access</NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid w-[200px] gap-3 p-4">
-                      {authLinks.map((link) => (
-                        <li key={link.href}>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href={link.href}
-                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                            >
-                              <div className="text-sm font-medium">{link.label}</div>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                      ))}
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost">Access</Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {authLinks.map((link) => (
+                  <DropdownMenuItem key={link.href} asChild>
+                    <Link href={link.href}>{link.label}</Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <Button onClick={toggleTheme} size="icon" variant="ghost" className="ml-2">
               {theme === "dark" ? <MoonIcon /> : <SunIcon />}
             </Button>
