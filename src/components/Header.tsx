@@ -20,74 +20,91 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { NavLink } from "@/types";
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const navLinks = [
+  const navLinks: NavLink[] = [
     { href: "/public", label: "Elections" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
   ];
 
-  const authLinks = [
+  const authLinks: NavLink[] = [
     { href: "/voter/login", label: "Voter Login" },
     { href: "/candidate/login", label: "Candidate Login" },
     { href: "/admin/login", label: "Admin" },
   ];
 
+  const ThemeToggleButton = () => (
+    <Button
+      onClick={toggleTheme}
+      size="icon"
+      variant="ghost"
+      aria-label="Toggle theme"
+      className="ml-2"
+    >
+      {theme === "dark" ? <MoonIcon /> : <SunIcon />}
+    </Button>
+  );
+
+  const Logo = () => (
+    <Link href="/" className="flex items-center gap-2">
+      <VoteIcon className="text-primary" />
+      <span className="text-xl font-bold">ChainElect</span>
+    </Link>
+  );
+
+  const renderNavLinks = (links: NavLink[], inDropdown = false) => {
+    if (inDropdown) {
+      return links.map((link) => (
+        <DropdownMenuItem key={link.href} asChild>
+          <Link href={link.href}>{link.label}</Link>
+        </DropdownMenuItem>
+      ));
+    }
+
+    return links.map((link) => (
+      <NavigationMenuItem key={link.href}>
+        <NavigationMenuLink
+          className={navigationMenuTriggerStyle()}
+          active={pathname === link.href}
+          asChild
+        >
+          <Link href={link.href}>{link.label}</Link>
+        </NavigationMenuLink>
+      </NavigationMenuItem>
+    ));
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-background border-b">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <VoteIcon className="text-primary" />
-            <span className="text-xl font-bold">ChainElect</span>
-          </Link>
+          <Logo />
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center">
             <NavigationMenu>
-              <NavigationMenuList>
-                {navLinks.map((link) => (
-                  <NavigationMenuItem key={link.href}>
-                    <NavigationMenuLink
-                      className={navigationMenuTriggerStyle()}
-                      active={pathname === link.href}
-                      asChild
-                    >
-                      <Link href={link.href}>{link.label}</Link>
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
-                ))}
-              </NavigationMenuList>
+              <NavigationMenuList>{renderNavLinks(navLinks)}</NavigationMenuList>
             </NavigationMenu>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost">Access</Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                {authLinks.map((link) => (
-                  <DropdownMenuItem key={link.href} asChild>
-                    <Link href={link.href}>{link.label}</Link>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
+              <DropdownMenuContent>{renderNavLinks(authLinks, true)}</DropdownMenuContent>
             </DropdownMenu>
 
-            <Button onClick={toggleTheme} size="icon" variant="ghost" className="ml-2">
-              {theme === "dark" ? <MoonIcon /> : <SunIcon />}
-            </Button>
+            <ThemeToggleButton />
           </div>
 
           {/* Mobile Nav Trigger */}
           <div className="md:hidden flex items-center gap-2">
-            <Button onClick={toggleTheme} size="icon" variant="ghost" aria-label="Toggle theme">
-              {theme === "dark" ? <MoonIcon /> : <SunIcon />}
-            </Button>
+            <ThemeToggleButton />
             <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -95,17 +112,9 @@ export default function Header() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56">
-                {navLinks.map((link) => (
-                  <DropdownMenuItem key={link.href} asChild>
-                    <Link href={link.href}>{link.label}</Link>
-                  </DropdownMenuItem>
-                ))}
+                {renderNavLinks(navLinks, true)}
                 <DropdownMenuItem className="my-2 border-t" disabled />
-                {authLinks.map((link) => (
-                  <DropdownMenuItem key={link.href} asChild>
-                    <Link href={link.href}>{link.label}</Link>
-                  </DropdownMenuItem>
-                ))}
+                {renderNavLinks(authLinks, true)}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
