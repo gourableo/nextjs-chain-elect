@@ -32,9 +32,9 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center justify-center">
             <div className="grid grid-cols-2 gap-4 md:gap-8">
-              <Card>
+              <Card className="text-center">
                 <CardHeader className="p-4">
-                  <CardTitle className="text-lg">Voter</CardTitle>
+                  <CardTitle className="text-lg flex justify-center">Voter</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
                   <p className="text-sm text-muted-foreground">
@@ -49,9 +49,9 @@ export default function Dashboard() {
                   </Link>
                 </CardFooter>
               </Card>
-              <Card>
+              <Card className="text-center">
                 <CardHeader className="p-4">
-                  <CardTitle className="text-lg">Candidate</CardTitle>
+                  <CardTitle className="text-lg flex justify-center">Candidate</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
                   <p className="text-sm text-muted-foreground">
@@ -66,9 +66,9 @@ export default function Dashboard() {
                   </Link>
                 </CardFooter>
               </Card>
-              <Card className="col-span-2">
+              <Card className="col-span-2 text-center">
                 <CardHeader className="p-4">
-                  <CardTitle className="text-lg">Admin</CardTitle>
+                  <CardTitle className="text-lg flex justify-center">Admin</CardTitle>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
                   <p className="text-sm text-muted-foreground">
