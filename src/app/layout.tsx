@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "ChainElect - Secure Blockchain Voting",
   description:
     "A decentralized, blockchain-powered web application for secure, transparent, and tamper-proof electronic voting.",

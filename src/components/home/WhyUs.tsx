@@ -16,8 +16,8 @@ export default function WhyUs() {
           </div>
         </div>
         <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3 lg:gap-12">
-          <Card className="flex flex-col items-center justify-center space-y-2 text-center">
-            <CardHeader>
+          <Card>
+            <CardHeader className="flex flex-col items-center justify-center">
               <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -33,17 +33,17 @@ export default function WhyUs() {
                   <line x1="2" x2="22" y1="10" y2="10" />
                 </svg>
               </div>
-              <CardTitle>Secure Voting</CardTitle>
+              <CardTitle className="mt-4">Secure Voting</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="text-center">
               <CardDescription>
                 Every vote is cryptographically secured on the blockchain, ensuring tamper-proof
                 elections.
               </CardDescription>
             </CardContent>
           </Card>
-          <Card className="flex flex-col items-center justify-center space-y-2 text-center">
-            <CardHeader>
+          <Card>
+            <CardHeader className="flex flex-col items-center justify-center">
               <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -61,16 +61,16 @@ export default function WhyUs() {
                   <path d="M21 13v2a4 4 0 0 1-4 4H3" />
                 </svg>
               </div>
-              <CardTitle>Transparent</CardTitle>
+              <CardTitle className="mt-4">Transparent</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="text-center">
               <CardDescription>
                 All election data is publicly verifiable while maintaining voter privacy.
               </CardDescription>
             </CardContent>
           </Card>
-          <Card className="flex flex-col items-center justify-center space-y-2 text-center">
-            <CardHeader>
+          <Card>
+            <CardHeader className="flex flex-col items-center justify-center">
               <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -85,9 +85,9 @@ export default function WhyUs() {
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
                 </svg>
               </div>
-              <CardTitle>Decentralized</CardTitle>
+              <CardTitle className="mt-4">Decentralized</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="text-center">
               <CardDescription>
                 No central authority controls the voting process, ensuring true democratic
                 principles.
