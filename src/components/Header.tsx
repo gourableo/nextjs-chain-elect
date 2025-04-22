@@ -34,9 +34,9 @@ export default function Header() {
   ];
 
   const authLinks: NavLink[] = [
-    { href: "/voter/login", label: "Voter Login" },
-    { href: "/candidate/login", label: "Candidate Login" },
-    { href: "/admin/login", label: "Admin" },
+    { href: "/voter", label: "Voter Dashboard" },
+    { href: "/candidate", label: "Candidate Dashboard" },
+    { href: "/admin", label: "Admin Dashboard" },
   ];
 
   const ThemeToggleButton = () => (
