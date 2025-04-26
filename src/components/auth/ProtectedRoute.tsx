@@ -9,15 +9,14 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
-import { ConnectWalletButton } from "@/components/common/ConnectWalletButton";
+import { AlertTriangle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ExternalLink, AlertTriangle } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isConnected } = useAccount();
   const [hasWallet, setHasWallet] = useState<boolean | null>(null);
+  const [isClientSide, setIsClientSide] = useState(false);
 
   useEffect(() => {
     // Check if MetaMask or other wallet is available
@@ -27,7 +26,11 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     };
 
     checkWallet();
+    setIsClientSide(true);
   }, []);
+
+  // Wait for client-side hydration
+  if (!isClientSide) return null;
 
   if (!isConnected) {
     return (
@@ -35,35 +38,21 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle>Authentication Required</CardTitle>
-            <CardDescription>Connect your wallet to access this page</CardDescription>
+            <CardDescription>
+              {hasWallet === false
+                ? "You need a Web3 wallet to access this page"
+                : "Connect your wallet from the header to access this page"}
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {hasWallet === false ? (
-              <Alert variant="destructive">
+            {hasWallet === false && (
+              <Alert>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  You need a Web3 wallet like MetaMask to use this feature
+                  You need to install a Web3 wallet like MetaMask first
                 </AlertDescription>
               </Alert>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                Click the button below to connect your wallet and access this page
-              </p>
             )}
-
-            <div className="flex justify-center">
-              {hasWallet === false ? (
-                <Button
-                  variant="outline"
-                  onClick={() => window.open("https://metamask.io/download/", "_blank")}
-                  className="flex items-center gap-2"
-                >
-                  Install MetaMask <ExternalLink size={16} />
-                </Button>
-              ) : (
-                <ConnectWalletButton />
-              )}
-            </div>
           </CardContent>
           <CardFooter className="flex justify-center border-t pt-4">
             <Link href="/" className="text-sm text-muted-foreground hover:underline">

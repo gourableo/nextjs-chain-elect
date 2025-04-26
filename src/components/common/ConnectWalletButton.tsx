@@ -4,18 +4,33 @@ import { useAccount, useConnect } from "wagmi";
 import { injected } from "wagmi/connectors";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Wallet } from "lucide-react";
+import { VariantProps } from "class-variance-authority";
+import { buttonVariants } from "@/components/ui/button";
 import { BaseError } from "viem";
 
-export function ConnectWalletButton() {
+interface ConnectWalletButtonProps
+  extends React.ComponentProps<"button">,
+    VariantProps<typeof buttonVariants> {
+  showInstallOption?: boolean;
+  asChild?: boolean;
+}
+
+export function ConnectWalletButton({
+  showInstallOption = true,
+  variant = "default",
+  size = "default",
+  className,
+  asChild = false,
+  ...props
+}: ConnectWalletButtonProps) {
   const { connectAsync } = useConnect();
   const { isConnected } = useAccount();
   const [hasWallet, setHasWallet] = useState<boolean | null>(null);
 
   // Check for wallet availability after component mounts
   useEffect(() => {
-    const checkWallet = async () => {
-      // Check if window.ethereum exists (MetaMask or compatible provider)
+    const checkWallet = () => {
       const hasEthereum = typeof window !== "undefined" && window.ethereum !== undefined;
       setHasWallet(hasEthereum);
     };
@@ -27,7 +42,7 @@ export function ConnectWalletButton() {
   if (isConnected) return null;
 
   // Handle wallet connection
-  const handleConnect = async () => {
+  const handleConnect = () => {
     toast.promise(connectAsync({ connector: injected() }), {
       loading: "Waiting for wallet confirmation...",
       success: () => {
@@ -41,15 +56,18 @@ export function ConnectWalletButton() {
     });
   };
 
-  // Show appropriate button based on wallet availability
-  if (hasWallet === false) {
+  // Show install button when no wallet is detected
+  if (hasWallet === false && showInstallOption) {
     return (
       <Button
         variant="outline"
         onClick={() => window.open("https://metamask.io/download/", "_blank")}
-        className="flex items-center gap-2"
+        className={className}
+        size={size}
+        asChild={asChild}
+        {...props}
       >
-        Install MetaMask <ExternalLink size={16} />
+        <ExternalLink className="mr-2" /> Install MetaMask
       </Button>
     );
   }
@@ -57,9 +75,14 @@ export function ConnectWalletButton() {
   return (
     <Button
       onClick={handleConnect}
-      variant="default"
+      variant={variant}
+      size={size}
+      className={className}
       disabled={hasWallet === null} // Disable while checking
+      asChild={asChild}
+      {...props}
     >
+      <Wallet className="mr-2" />
       {hasWallet === null ? "Checking wallet..." : "Connect Wallet"}
     </Button>
   );

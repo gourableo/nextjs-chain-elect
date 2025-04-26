@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { VoterRegistrationForm } from "@/components/voter/VoterRegistrationForm";
@@ -10,6 +10,7 @@ import { VoterUpdateForm } from "@/components/voter/VoterUpdateForm";
 import { useVoterContract } from "@/hooks/useVoterContract";
 
 export default function VoterDashboard() {
+  const { isConnected } = useAccount();
   const { isRegistered, refetchRegistrationStatus } = useVoterContract();
   const [isPageLoaded, setIsPageLoaded] = useState(false);
 
@@ -17,6 +18,13 @@ export default function VoterDashboard() {
   useEffect(() => {
     setIsPageLoaded(true);
   }, []);
+
+  // Refresh registration status when connected
+  useEffect(() => {
+    if (isConnected) {
+      refetchRegistrationStatus();
+    }
+  }, [isConnected, refetchRegistrationStatus]);
 
   // Avoid rendering until after client-side hydration
   if (!isPageLoaded) {
@@ -37,10 +45,9 @@ export default function VoterDashboard() {
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Wallet Connected</AlertTitle>
               <AlertDescription>
-                Your wallet is connected.
                 {isRegistered
-                  ? " You are registered as a voter."
-                  : " Please register to participate in elections."}
+                  ? "You are registered as a voter."
+                  : "Please register to participate in elections."}
               </AlertDescription>
             </Alert>
           </div>
