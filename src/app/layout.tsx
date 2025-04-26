@@ -7,6 +7,7 @@ import { cookieToInitialState } from "wagmi";
 import { config } from "@/wagmi.config";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,11 +35,11 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers initialState={initialState}>
-          {" "}
           <div className="min-h-screen bg-background flex flex-col dark:bg-slate-900 text-slate-900 dark:text-white transition-colors duration-300">
             <Header />
             <main className="flex-grow container mx-auto py-10">{children}</main>
             <Footer />
+            <Toaster richColors />
           </div>
         </Providers>
       </body>
