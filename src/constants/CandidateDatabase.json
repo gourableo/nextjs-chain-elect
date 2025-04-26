@@ -1,6 +1,6 @@
 {
   "addresses": {
-    "sepolia": "0x9b34b5bbC64Ca4d6F5814B91ddA4Fa7B04b7E965"
+    "sepolia": "0x177F485C316534D482e150173e354F1c5F6e6F21"
   },
   "abi": [
     {
@@ -10,52 +10,47 @@
     },
     {
       "inputs": [],
-      "name": "VoterDatabase__AdminNotFound",
+      "name": "CandidateDatabase__AdminNotFound",
       "type": "error"
     },
     {
       "inputs": [],
-      "name": "VoterDatabase__AlreadyAdmin",
+      "name": "CandidateDatabase__AlreadyAdmin",
       "type": "error"
     },
     {
       "inputs": [],
-      "name": "VoterDatabase__AlreadyRegistered",
+      "name": "CandidateDatabase__AlreadyRegistered",
       "type": "error"
     },
     {
       "inputs": [],
-      "name": "VoterDatabase__CannotUpdateAfterVoting",
+      "name": "CandidateDatabase__ImportFailed",
       "type": "error"
     },
     {
       "inputs": [],
-      "name": "VoterDatabase__ImportFailed",
+      "name": "CandidateDatabase__InvalidAddress",
       "type": "error"
     },
     {
       "inputs": [],
-      "name": "VoterDatabase__InvalidAddress",
+      "name": "CandidateDatabase__NotAdmin",
       "type": "error"
     },
     {
       "inputs": [],
-      "name": "VoterDatabase__NotAdmin",
+      "name": "CandidateDatabase__NotEligible",
       "type": "error"
     },
     {
       "inputs": [],
-      "name": "VoterDatabase__NotEligible",
+      "name": "CandidateDatabase__NotOwner",
       "type": "error"
     },
     {
       "inputs": [],
-      "name": "VoterDatabase__NotOwner",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "VoterDatabase__NotRegistered",
+      "name": "CandidateDatabase__NotRegistered",
       "type": "error"
     },
     {
@@ -83,7 +78,7 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "voter",
+          "name": "candidate",
           "type": "address"
         },
         {
@@ -93,7 +88,7 @@
           "type": "address"
         }
       ],
-      "name": "AdminAddedVoter",
+      "name": "AdminAddedCandidate",
       "type": "event"
     },
     {
@@ -121,7 +116,7 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "voter",
+          "name": "candidate",
           "type": "address"
         },
         {
@@ -131,7 +126,7 @@
           "type": "address"
         }
       ],
-      "name": "AdminRemovedVoter",
+      "name": "AdminUpdatedCandidate",
       "type": "event"
     },
     {
@@ -140,17 +135,11 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "voter",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "admin",
+          "name": "candidate",
           "type": "address"
         }
       ],
-      "name": "AdminUpdatedVoter",
+      "name": "CandidateDeleted",
       "type": "event"
     },
     {
@@ -159,17 +148,11 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "voter",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "admin",
+          "name": "candidate",
           "type": "address"
         }
       ],
-      "name": "AdminUpdatedVotingStatus",
+      "name": "CandidateRegistered",
       "type": "event"
     },
     {
@@ -178,50 +161,11 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "voter",
+          "name": "candidate",
           "type": "address"
         }
       ],
-      "name": "VoterDeleted",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "voter",
-          "type": "address"
-        }
-      ],
-      "name": "VoterRegistered",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "voter",
-          "type": "address"
-        }
-      ],
-      "name": "VoterUpdated",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "voter",
-          "type": "address"
-        }
-      ],
-      "name": "VoterVoted",
+      "name": "CandidateUpdated",
       "type": "event"
     },
     {
@@ -236,11 +180,11 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "votersImported",
+          "name": "candidatesImported",
           "type": "uint256"
         }
       ],
-      "name": "VotersImported",
+      "name": "CandidatesImported",
       "type": "event"
     },
     {
@@ -269,151 +213,22 @@
           "type": "uint256"
         },
         {
-          "internalType": "enum VoterDatabase.Gender",
-          "name": "_gender",
-          "type": "uint8"
-        },
-        {
           "internalType": "string",
-          "name": "_presentAddress",
-          "type": "string"
-        }
-      ],
-      "name": "addVoter",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_voterAddress",
-          "type": "address"
-        },
-        {
-          "internalType": "string",
-          "name": "_name",
+          "name": "_email",
           "type": "string"
         },
         {
-          "internalType": "uint256",
-          "name": "_age",
-          "type": "uint256"
-        },
-        {
-          "internalType": "enum VoterDatabase.Gender",
-          "name": "_gender",
-          "type": "uint8"
-        },
-        {
           "internalType": "string",
-          "name": "_presentAddress",
+          "name": "_qualifications",
           "type": "string"
         },
         {
-          "internalType": "bool",
-          "name": "_hasVoted",
-          "type": "bool"
-        }
-      ],
-      "name": "adminAddVoter",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_sourceContract",
-          "type": "address"
-        },
-        {
-          "internalType": "address[]",
-          "name": "_voterAddresses",
-          "type": "address[]"
-        }
-      ],
-      "name": "adminBatchImportVoters",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "adminGetAllVoters",
-      "outputs": [
-        {
-          "internalType": "address[]",
-          "name": "",
-          "type": "address[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "adminGetVoterCount",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_voterAddress",
-          "type": "address"
-        }
-      ],
-      "name": "adminGetVoterDetails",
-      "outputs": [
-        {
           "internalType": "string",
-          "name": "name",
+          "name": "_manifesto",
           "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "age",
-          "type": "uint256"
-        },
-        {
-          "internalType": "enum VoterDatabase.Gender",
-          "name": "gender",
-          "type": "uint8"
-        },
-        {
-          "internalType": "string",
-          "name": "presentAddress",
-          "type": "string"
-        },
-        {
-          "internalType": "bool",
-          "name": "hasVoted",
-          "type": "bool"
         }
       ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_sourceContract",
-          "type": "address"
-        }
-      ],
-      "name": "adminImportAllVoters",
+      "name": "addCandidate",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -422,56 +237,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_sourceContract",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_voterAddress",
-          "type": "address"
-        }
-      ],
-      "name": "adminImportVoter",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_voterAddress",
-          "type": "address"
-        }
-      ],
-      "name": "adminRemoveVoter",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_voterAddress",
-          "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "_hasVoted",
-          "type": "bool"
-        }
-      ],
-      "name": "adminSetVotingStatus",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_voterAddress",
+          "name": "_candidateAddress",
           "type": "address"
         },
         {
@@ -485,22 +251,109 @@
           "type": "uint256"
         },
         {
-          "internalType": "enum VoterDatabase.Gender",
-          "name": "_gender",
-          "type": "uint8"
-        },
-        {
           "internalType": "string",
-          "name": "_presentAddress",
+          "name": "_email",
           "type": "string"
         },
         {
-          "internalType": "bool",
-          "name": "_hasVoted",
-          "type": "bool"
+          "internalType": "string",
+          "name": "_qualifications",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_manifesto",
+          "type": "string"
         }
       ],
-      "name": "adminUpdateVoter",
+      "name": "adminAddCandidate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_sourceContract",
+          "type": "address"
+        },
+        {
+          "internalType": "address[]",
+          "name": "_candidateAddresses",
+          "type": "address[]"
+        }
+      ],
+      "name": "adminBatchImportCandidates",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_sourceContract",
+          "type": "address"
+        }
+      ],
+      "name": "adminImportAllCandidates",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_sourceContract",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_candidateAddress",
+          "type": "address"
+        }
+      ],
+      "name": "adminImportCandidate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_candidateAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_age",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_email",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_qualifications",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_manifesto",
+          "type": "string"
+        }
+      ],
+      "name": "adminUpdateCandidate",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -519,8 +372,14 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "deleteVoter",
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_candidateAddress",
+          "type": "address"
+        }
+      ],
+      "name": "deleteCandidate",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -553,7 +412,39 @@
     },
     {
       "inputs": [],
-      "name": "getMyDetails",
+      "name": "getAllCandidates",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getCandidateCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "count",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_candidateAddress",
+          "type": "address"
+        }
+      ],
+      "name": "getCandidateDetails",
       "outputs": [
         {
           "internalType": "string",
@@ -566,27 +457,38 @@
           "type": "uint256"
         },
         {
-          "internalType": "enum VoterDatabase.Gender",
-          "name": "gender",
-          "type": "uint8"
-        },
-        {
           "internalType": "string",
-          "name": "presentAddress",
+          "name": "email",
           "type": "string"
         },
         {
-          "internalType": "bool",
-          "name": "hasVoted",
-          "type": "bool"
+          "internalType": "string",
+          "name": "qualifications",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "manifesto",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "registrationTimestamp",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "getMyRegistrationStatus",
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_candidateAddress",
+          "type": "address"
+        }
+      ],
+      "name": "getCandidateRegistrationStatus",
       "outputs": [
         {
           "internalType": "bool",
@@ -599,11 +501,49 @@
     },
     {
       "inputs": [],
-      "name": "getMyVotingStatus",
+      "name": "getMyCandidateDetails",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "age",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "qualifications",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "manifesto",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "registrationTimestamp",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getMyRegistrationStatus",
       "outputs": [
         {
           "internalType": "bool",
-          "name": "hasVoted",
+          "name": "isRegistered",
           "type": "bool"
         }
       ],
@@ -643,13 +583,6 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "markVoted",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
           "internalType": "address",
@@ -675,17 +608,22 @@
           "type": "uint256"
         },
         {
-          "internalType": "enum VoterDatabase.Gender",
-          "name": "_gender",
-          "type": "uint8"
+          "internalType": "string",
+          "name": "_email",
+          "type": "string"
         },
         {
           "internalType": "string",
-          "name": "_presentAddress",
+          "name": "_qualifications",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_manifesto",
           "type": "string"
         }
       ],
-      "name": "updateVoter",
+      "name": "updateCandidate",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
