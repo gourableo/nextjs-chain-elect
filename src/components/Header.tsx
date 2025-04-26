@@ -4,9 +4,9 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { useTheme } from "@/lib/theme-provider";
+import { useTheme } from "next-themes";
 import { useAccount, useDisconnect } from "wagmi";
-import { MenuIcon, XIcon, MoonIcon, SunIcon, VoteIcon, Wallet } from "lucide-react";
+import { MenuIcon, XIcon, MoonIcon, SunIcon, VoteIcon, Wallet, LaptopIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ConnectWalletButton } from "@/components/common/ConnectWalletButton";
 import {
@@ -15,6 +15,10 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
 import {
   NavigationMenu,
@@ -26,7 +30,7 @@ import {
 import { NavLink } from "@/types";
 
 export default function Header() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isConnected, address } = useAccount();
@@ -52,15 +56,24 @@ export default function Header() {
   ];
 
   const ThemeToggleButton = () => (
-    <Button
-      onClick={toggleTheme}
-      size="icon"
-      variant="ghost"
-      aria-label="Toggle theme"
-      className="ml-2"
-    >
-      {theme === "dark" ? <MoonIcon /> : <SunIcon />}
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button size="icon" variant="ghost" aria-label="Toggle theme" className="ml-2">
+          {theme === "dark" ? <MoonIcon /> : theme === "light" ? <SunIcon /> : <LaptopIcon />}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setTheme("light")}>
+          <SunIcon className="mr-2 h-4 w-4" /> Light
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("dark")}>
+          <MoonIcon className="mr-2 h-4 w-4" /> Dark
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("system")}>
+          <LaptopIcon className="mr-2 h-4 w-4" /> System
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 
   const Logo = () => (
@@ -147,8 +160,6 @@ export default function Header() {
                 <ConnectWalletButton size="sm" />
               ))}
 
-            <ThemeToggleButton />
-
             <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -157,6 +168,37 @@ export default function Header() {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56">
                 {renderNavLinks(navLinks, true)}
+                <DropdownMenuSeparator />
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    {theme === "dark" ? (
+                      <>
+                        <MoonIcon className="mr-2 h-4 w-4" /> Appearance
+                      </>
+                    ) : theme === "light" ? (
+                      <>
+                        <SunIcon className="mr-2 h-4 w-4" /> Appearance
+                      </>
+                    ) : (
+                      <>
+                        <LaptopIcon className="mr-2 h-4 w-4" /> Appearance
+                      </>
+                    )}
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuItem onClick={() => setTheme("light")}>
+                        <SunIcon className="mr-2 h-4 w-4" /> Light
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setTheme("dark")}>
+                        <MoonIcon className="mr-2 h-4 w-4" /> Dark
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setTheme("system")}>
+                        <LaptopIcon className="mr-2 h-4 w-4" /> System
+                      </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
