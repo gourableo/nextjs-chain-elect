@@ -1,6 +1,12 @@
 import { VOTER_DB_ABI, VOTER_DB_ADDRESS } from "@/constants";
 import { toast } from "sonner";
-import { BaseError, useReadContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import {
+  BaseError,
+  useAccount,
+  useReadContract,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 import { useState } from "react";
 import { ContractFunctionArgs } from "viem";
 
@@ -23,9 +29,8 @@ export type VoterDetails = {
   hasVoted: boolean;
 };
 
-type GetMyDetailsResult = [string, bigint, number, string, boolean];
-
 export function useVoterDatabaseFunction(functionName: string) {
+  const { address } = useAccount();
   const { writeContractAsync, isPending } = useWriteContract();
   const [hash, setHash] = useState<`0x${string}` | undefined>(undefined);
 
@@ -42,6 +47,7 @@ export function useVoterDatabaseFunction(functionName: string) {
           abi: VOTER_DB_ABI,
           address: VOTER_DB_ADDRESS,
           args,
+          account: address,
         }),
         {
           loading: "Waiting for wallet confirmation...",
@@ -141,10 +147,12 @@ export function useMarkVoted() {
 
 // Voter Information Reading
 export function useGetMyDetails() {
+  const { address } = useAccount();
   const { data, isLoading, isError, refetch } = useReadContract({
     address: VOTER_DB_ADDRESS,
     abi: VOTER_DB_ABI,
     functionName: "getMyDetails",
+    account: address,
   });
 
   const formattedData: VoterDetails | undefined = data
@@ -166,10 +174,12 @@ export function useGetMyDetails() {
 }
 
 export function useGetMyRegistrationStatus() {
+  const { address } = useAccount();
   const { data, isLoading, isError, refetch } = useReadContract({
     address: VOTER_DB_ADDRESS,
     abi: VOTER_DB_ABI,
     functionName: "getMyRegistrationStatus",
+    account: address,
   });
 
   return {
@@ -181,10 +191,12 @@ export function useGetMyRegistrationStatus() {
 }
 
 export function useGetMyVotingStatus() {
+  const { address } = useAccount();
   const { data, isLoading, isError, refetch } = useReadContract({
     address: VOTER_DB_ADDRESS,
     abi: VOTER_DB_ABI,
     functionName: "getMyVotingStatus",
+    account: address,
   });
 
   return {
@@ -197,10 +209,12 @@ export function useGetMyVotingStatus() {
 
 // Admin Functions
 export function useAmIAdmin() {
+  const { address } = useAccount();
   const { data, isLoading, isError, refetch } = useReadContract({
     address: VOTER_DB_ADDRESS,
     abi: VOTER_DB_ABI,
     functionName: "amIAdmin",
+    account: address,
   });
 
   return {
@@ -289,11 +303,13 @@ export function useAdminSetVotingStatus() {
 
 // Admin Data Reading
 export function useAdminGetVoterDetails(voterAddress: `0x${string}` | undefined) {
+  const { address } = useAccount();
   const { data, isLoading, isError, refetch } = useReadContract({
     address: VOTER_DB_ADDRESS,
     abi: VOTER_DB_ABI,
     functionName: "adminGetVoterDetails",
     args: voterAddress ? [voterAddress] : undefined,
+    account: address,
   });
 
   const formattedData: VoterDetails | undefined = data
@@ -315,10 +331,12 @@ export function useAdminGetVoterDetails(voterAddress: `0x${string}` | undefined)
 }
 
 export function useAdminGetVoterCount() {
+  const { address } = useAccount();
   const { data, isLoading, isError, refetch } = useReadContract({
     address: VOTER_DB_ADDRESS,
     abi: VOTER_DB_ABI,
     functionName: "adminGetVoterCount",
+    account: address,
   });
 
   return {
@@ -330,10 +348,12 @@ export function useAdminGetVoterCount() {
 }
 
 export function useAdminGetAllVoters() {
+  const { address } = useAccount();
   const { data, isLoading, isError, refetch } = useReadContract({
     address: VOTER_DB_ADDRESS,
     abi: VOTER_DB_ABI,
     functionName: "adminGetAllVoters",
+    account: address,
   });
 
   return {
@@ -380,10 +400,12 @@ export function useRemoveAdmin() {
 }
 
 export function useGetAllAdmins() {
+  const { address } = useAccount();
   const { data, isLoading, isError, refetch } = useReadContract({
     address: VOTER_DB_ADDRESS,
     abi: VOTER_DB_ABI,
     functionName: "getAllAdmins",
+    account: address,
   });
 
   return {
