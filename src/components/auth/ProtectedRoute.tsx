@@ -9,7 +9,7 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangleIcon } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
 
@@ -47,7 +47,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
           <CardContent className="space-y-4">
             {hasWallet === false && (
               <Alert>
-                <AlertTriangle className="h-4 w-4" />
+                <AlertTriangleIcon className="h-4 w-4" />
                 <AlertDescription>
                   You need to install a Web3 wallet like MetaMask first
                 </AlertDescription>

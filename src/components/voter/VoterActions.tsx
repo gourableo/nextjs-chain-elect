@@ -27,7 +27,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Gender, VoterDetails, useDeleteVoter, useUpdateVoter } from "@/hooks/useVoterDatabase";
-import { Loader2, Pencil, Trash2 } from "lucide-react";
+import { Loader2Icon, PencilIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
 
 export function VoterActions({
@@ -67,7 +67,7 @@ export function VoterActions({
             onClick={() => setShowUpdateDialog(true)}
             className="flex items-center"
           >
-            <Pencil className="mr-2 h-4 w-4" /> Update Information
+            <PencilIcon className="mr-2 h-4 w-4" /> Update Information
           </Button>
 
           <AlertDialog>
@@ -75,12 +75,12 @@ export function VoterActions({
               <Button variant="destructive" disabled={isDeleteProcessing}>
                 {isDeleteProcessing ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
                     Processing...
                   </>
                 ) : (
                   <>
-                    <Trash2 className="mr-2 h-4 w-4" /> Cancel Registration
+                    <Trash2Icon className="mr-2 h-4 w-4" /> Cancel Registration
                   </>
                 )}
               </Button>
@@ -230,7 +230,7 @@ function UpdateVoterDialog({
               Cancel
             </Button>
             <Button type="submit" disabled={isProcessing}>
-              {isProcessing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isProcessing && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
               {isProcessing ? "Updating..." : "Save Changes"}
             </Button>
           </DialogFooter>

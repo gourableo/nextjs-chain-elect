@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { useAddVoter, Gender } from "@/hooks/useVoterDatabase";
-import { Loader2 } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
 import { toast } from "sonner";
 
 export function VoterRegistrationForm() {
@@ -123,7 +123,7 @@ export function VoterRegistrationForm() {
 
         <CardFooter>
           <Button type="submit" className="w-full" disabled={isLoading || !isFormValid}>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
             {isLoading ? "Processing..." : "Register as Voter"}
           </Button>
         </CardFooter>

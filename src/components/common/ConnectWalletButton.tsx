@@ -4,7 +4,7 @@ import { useAccount, useConnect } from "wagmi";
 import { injected } from "wagmi/connectors";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ExternalLink, Wallet } from "lucide-react";
+import { ExternalLinkIcon, WalletIcon } from "lucide-react";
 import { VariantProps } from "class-variance-authority";
 import { buttonVariants } from "@/components/ui/button";
 import { BaseError } from "viem";
@@ -67,7 +67,7 @@ export function ConnectWalletButton({
         asChild={asChild}
         {...props}
       >
-        <ExternalLink className="mr-2" /> Install MetaMask
+        <ExternalLinkIcon className="mr-2" /> Install MetaMask
       </Button>
     );
   }
@@ -82,7 +82,7 @@ export function ConnectWalletButton({
       asChild={asChild}
       {...props}
     >
-      <Wallet className="mr-2" />
+      <WalletIcon className="mr-2" />
       {hasWallet === null ? "Checking wallet..." : "Connect Wallet"}
     </Button>
   );
