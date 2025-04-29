@@ -29,7 +29,8 @@ export type VoterDetails = {
   hasVoted: boolean;
 };
 
-export function useVoterDatabaseFunction(functionName: string) {
+// CORE HOOKS FOR READ AND WRITE OPERATIONS
+export function useVoterDatabaseWriteFunction(functionName: string) {
   const { address } = useAccount();
   const { writeContractAsync, isPending } = useWriteContract();
   const [hash, setHash] = useState<`0x${string}` | undefined>(undefined);
@@ -76,10 +77,31 @@ export function useVoterDatabaseFunction(functionName: string) {
   };
 }
 
+export function useVoterDatabaseReadFunction<T>(
+  functionName: string,
+  args?: ContractFunctionArgs,
+) {
+  const { address } = useAccount();
+  const { data, isLoading, isError, refetch } = useReadContract({
+    address: VOTER_DB_ADDRESS,
+    abi: VOTER_DB_ABI,
+    functionName,
+    args,
+    account: address,
+  });
+
+  return {
+    data: data as T | undefined,
+    isLoading,
+    isError,
+    refetch,
+  };
+}
+
 // Voter Registration Operations
 export function useAddVoter() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
-    useVoterDatabaseFunction("addVoter");
+    useVoterDatabaseWriteFunction("addVoter");
 
   const addVoter = async ({ name, age, gender, presentAddress }: AddVoterParams) => {
     return execute([name, BigInt(age), gender, presentAddress]);
@@ -96,7 +118,7 @@ export function useAddVoter() {
 
 export function useUpdateVoter() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
-    useVoterDatabaseFunction("updateVoter");
+    useVoterDatabaseWriteFunction("updateVoter");
 
   const updateVoter = async ({ name, age, gender, presentAddress }: UpdateVoterParams) => {
     return execute([name, BigInt(age), gender, presentAddress]);
@@ -113,7 +135,7 @@ export function useUpdateVoter() {
 
 export function useDeleteVoter() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
-    useVoterDatabaseFunction("deleteVoter");
+    useVoterDatabaseWriteFunction("deleteVoter");
 
   const deleteVoter = async () => {
     return execute();
@@ -130,7 +152,7 @@ export function useDeleteVoter() {
 
 export function useMarkVoted() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
-    useVoterDatabaseFunction("markVoted");
+    useVoterDatabaseWriteFunction("markVoted");
 
   const markVoted = async () => {
     return execute();
@@ -147,21 +169,16 @@ export function useMarkVoted() {
 
 // Voter Information Reading
 export function useGetMyDetails() {
-  const { address } = useAccount();
-  const { data, isLoading, isError, refetch } = useReadContract({
-    address: VOTER_DB_ADDRESS,
-    abi: VOTER_DB_ABI,
-    functionName: "getMyDetails",
-    account: address,
-  });
+  const { data, isLoading, isError, refetch } =
+    useVoterDatabaseReadFunction<[string, bigint, Gender, string, boolean]>("getMyDetails");
 
   const formattedData: VoterDetails | undefined = data
     ? {
-        name: data[0] as string,
-        age: data[1] as bigint,
-        gender: data[2] as Gender,
-        presentAddress: data[3] as string,
-        hasVoted: data[4] as boolean,
+        name: data[0],
+        age: data[1],
+        gender: data[2],
+        presentAddress: data[3],
+        hasVoted: data[4],
       }
     : undefined;
 
@@ -174,16 +191,12 @@ export function useGetMyDetails() {
 }
 
 export function useGetMyRegistrationStatus() {
-  const { address } = useAccount();
-  const { data, isLoading, isError, refetch } = useReadContract({
-    address: VOTER_DB_ADDRESS,
-    abi: VOTER_DB_ABI,
-    functionName: "getMyRegistrationStatus",
-    account: address,
-  });
+  const { data, isLoading, isError, refetch } = useVoterDatabaseReadFunction<boolean>(
+    "getMyRegistrationStatus",
+  );
 
   return {
-    isRegistered: data as boolean | undefined,
+    isRegistered: data,
     isLoading,
     isError,
     refetch,
@@ -191,16 +204,11 @@ export function useGetMyRegistrationStatus() {
 }
 
 export function useGetMyVotingStatus() {
-  const { address } = useAccount();
-  const { data, isLoading, isError, refetch } = useReadContract({
-    address: VOTER_DB_ADDRESS,
-    abi: VOTER_DB_ABI,
-    functionName: "getMyVotingStatus",
-    account: address,
-  });
+  const { data, isLoading, isError, refetch } =
+    useVoterDatabaseReadFunction<boolean>("getMyVotingStatus");
 
   return {
-    hasVoted: data as boolean | undefined,
+    hasVoted: data,
     isLoading,
     isError,
     refetch,
@@ -209,16 +217,10 @@ export function useGetMyVotingStatus() {
 
 // Admin Functions
 export function useAmIAdmin() {
-  const { address } = useAccount();
-  const { data, isLoading, isError, refetch } = useReadContract({
-    address: VOTER_DB_ADDRESS,
-    abi: VOTER_DB_ABI,
-    functionName: "amIAdmin",
-    account: address,
-  });
+  const { data, isLoading, isError, refetch } = useVoterDatabaseReadFunction<boolean>("amIAdmin");
 
   return {
-    isAdmin: data as boolean | undefined,
+    isAdmin: data,
     isLoading,
     isError,
     refetch,
@@ -227,7 +229,7 @@ export function useAmIAdmin() {
 
 export function useAdminAddVoter() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
-    useVoterDatabaseFunction("adminAddVoter");
+    useVoterDatabaseWriteFunction("adminAddVoter");
 
   const adminAddVoter = async (
     voterAddress: `0x${string}`,
@@ -248,7 +250,7 @@ export function useAdminAddVoter() {
 
 export function useAdminUpdateVoter() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
-    useVoterDatabaseFunction("adminUpdateVoter");
+    useVoterDatabaseWriteFunction("adminUpdateVoter");
 
   const adminUpdateVoter = async (
     voterAddress: `0x${string}`,
@@ -269,7 +271,7 @@ export function useAdminUpdateVoter() {
 
 export function useAdminRemoveVoter() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
-    useVoterDatabaseFunction("adminRemoveVoter");
+    useVoterDatabaseWriteFunction("adminRemoveVoter");
 
   const adminRemoveVoter = async (voterAddress: `0x${string}`) => {
     return execute([voterAddress]);
@@ -286,7 +288,7 @@ export function useAdminRemoveVoter() {
 
 export function useAdminSetVotingStatus() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
-    useVoterDatabaseFunction("adminSetVotingStatus");
+    useVoterDatabaseWriteFunction("adminSetVotingStatus");
 
   const adminSetVotingStatus = async (voterAddress: `0x${string}`, hasVoted: boolean) => {
     return execute([voterAddress, hasVoted]);
@@ -303,22 +305,17 @@ export function useAdminSetVotingStatus() {
 
 // Admin Data Reading
 export function useAdminGetVoterDetails(voterAddress: `0x${string}` | undefined) {
-  const { address } = useAccount();
-  const { data, isLoading, isError, refetch } = useReadContract({
-    address: VOTER_DB_ADDRESS,
-    abi: VOTER_DB_ABI,
-    functionName: "adminGetVoterDetails",
-    args: voterAddress ? [voterAddress] : undefined,
-    account: address,
-  });
+  const { data, isLoading, isError, refetch } = useVoterDatabaseReadFunction<
+    [string, bigint, Gender, string, boolean]
+  >("adminGetVoterDetails", voterAddress ? [voterAddress] : undefined);
 
   const formattedData: VoterDetails | undefined = data
     ? {
-        name: data[0] as string,
-        age: data[1] as bigint,
-        gender: data[2] as Gender,
-        presentAddress: data[3] as string,
-        hasVoted: data[4] as boolean,
+        name: data[0],
+        age: data[1],
+        gender: data[2],
+        presentAddress: data[3],
+        hasVoted: data[4],
       }
     : undefined;
 
@@ -331,16 +328,11 @@ export function useAdminGetVoterDetails(voterAddress: `0x${string}` | undefined)
 }
 
 export function useAdminGetVoterCount() {
-  const { address } = useAccount();
-  const { data, isLoading, isError, refetch } = useReadContract({
-    address: VOTER_DB_ADDRESS,
-    abi: VOTER_DB_ABI,
-    functionName: "adminGetVoterCount",
-    account: address,
-  });
+  const { data, isLoading, isError, refetch } =
+    useVoterDatabaseReadFunction<bigint>("adminGetVoterCount");
 
   return {
-    voterCount: data as bigint | undefined,
+    voterCount: data,
     isLoading,
     isError,
     refetch,
@@ -348,16 +340,11 @@ export function useAdminGetVoterCount() {
 }
 
 export function useAdminGetAllVoters() {
-  const { address } = useAccount();
-  const { data, isLoading, isError, refetch } = useReadContract({
-    address: VOTER_DB_ADDRESS,
-    abi: VOTER_DB_ABI,
-    functionName: "adminGetAllVoters",
-    account: address,
-  });
+  const { data, isLoading, isError, refetch } =
+    useVoterDatabaseReadFunction<`0x${string}`[]>("adminGetAllVoters");
 
   return {
-    voters: data as `0x${string}`[] | undefined,
+    voters: data,
     isLoading,
     isError,
     refetch,
@@ -367,7 +354,7 @@ export function useAdminGetAllVoters() {
 // Admin Management
 export function useAddAdmin() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
-    useVoterDatabaseFunction("addAdmin");
+    useVoterDatabaseWriteFunction("addAdmin");
 
   const addAdmin = async (adminAddress: `0x${string}`) => {
     return execute([adminAddress]);
@@ -384,7 +371,7 @@ export function useAddAdmin() {
 
 export function useRemoveAdmin() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
-    useVoterDatabaseFunction("removeAdmin");
+    useVoterDatabaseWriteFunction("removeAdmin");
 
   const removeAdmin = async (adminAddress: `0x${string}`) => {
     return execute([adminAddress]);
@@ -400,16 +387,11 @@ export function useRemoveAdmin() {
 }
 
 export function useGetAllAdmins() {
-  const { address } = useAccount();
-  const { data, isLoading, isError, refetch } = useReadContract({
-    address: VOTER_DB_ADDRESS,
-    abi: VOTER_DB_ABI,
-    functionName: "getAllAdmins",
-    account: address,
-  });
+  const { data, isLoading, isError, refetch } =
+    useVoterDatabaseReadFunction<`0x${string}`[]>("getAllAdmins");
 
   return {
-    admins: data as `0x${string}`[] | undefined,
+    admins: data,
     isLoading,
     isError,
     refetch,
@@ -419,7 +401,7 @@ export function useGetAllAdmins() {
 // Data Import Functions
 export function useAdminImportVoter() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
-    useVoterDatabaseFunction("adminImportVoter");
+    useVoterDatabaseWriteFunction("adminImportVoter");
 
   const adminImportVoter = async (sourceContract: `0x${string}`, voterAddress: `0x${string}`) => {
     return execute([sourceContract, voterAddress]);
@@ -436,7 +418,7 @@ export function useAdminImportVoter() {
 
 export function useAdminBatchImportVoters() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
-    useVoterDatabaseFunction("adminBatchImportVoters");
+    useVoterDatabaseWriteFunction("adminBatchImportVoters");
 
   const adminBatchImportVoters = async (
     sourceContract: `0x${string}`,
@@ -456,7 +438,7 @@ export function useAdminBatchImportVoters() {
 
 export function useAdminImportAllVoters() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
-    useVoterDatabaseFunction("adminImportAllVoters");
+    useVoterDatabaseWriteFunction("adminImportAllVoters");
 
   const adminImportAllVoters = async (sourceContract: `0x${string}`) => {
     return execute([sourceContract]);
