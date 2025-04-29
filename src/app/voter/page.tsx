@@ -1,0 +1,31 @@
+"use client";
+
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { PageHeader } from "@/components/common/PageHeader";
+import { VoterRegistrationForm } from "@/components/voter/VoterRegistrationForm";
+import { VoterDashboard } from "@/components/voter/VoterDashboard";
+import { useGetMyRegistrationStatus } from "@/hooks/useVoterDatabase";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+
+export default function VoterPage() {
+  const { isRegistered, isLoading } = useGetMyRegistrationStatus();
+
+  return (
+    <ProtectedRoute>
+      <div className="container max-w-4xl py-8">
+        <PageHeader
+          title="Voter Portal"
+          description="Register as a voter or manage your voter information"
+        />
+
+        {isLoading ? (
+          <LoadingSpinner message="Checking your registration status..." />
+        ) : isRegistered ? (
+          <VoterDashboard />
+        ) : (
+          <VoterRegistrationForm />
+        )}
+      </div>
+    </ProtectedRoute>
+  );
+}
