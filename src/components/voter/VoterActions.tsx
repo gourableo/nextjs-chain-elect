@@ -56,14 +56,7 @@ export function VoterActions({
   }, [isDeletionConfirmed, onUpdateAction, router]);
 
   const handleDelete = async () => {
-    try {
-      await deleteVoter();
-      // The toast for submission is handled in the hook
-      // The toast for confirmation is handled in the hook
-      // The UI will refresh via the useEffect above
-    } catch (error) {
-      console.error("Deletion error:", error);
-    }
+    await deleteVoter();
   };
 
   return (

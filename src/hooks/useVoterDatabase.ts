@@ -52,37 +52,51 @@ export function useVoterDatabaseWriteFunction(functionName: string) {
       loading?: string;
       success?: string;
       error?: string;
-      confirmed?: string; // Add confirmed message
+      confirmed?: string;
     },
   ) => {
-    console.log("VoterDatabase Function:", functionName, args);
-    const txHash = await toast
-      .promise(
-        writeContractAsync({
-          functionName,
-          abi: VOTER_DB_ABI,
-          address: VOTER_DB_ADDRESS,
-          args,
-          account: address,
-        }),
-        {
-          loading: customToastMessages?.loading || "Waiting for wallet confirmation...",
-          success: (data) => {
-            setHash(data);
-            return (
-              customToastMessages?.success || "Transaction submitted! Waiting for confirmation..."
-            );
+    console.log("VoterDatabase Function Called!:", functionName, args);
+    try {
+      const txHash = await toast
+        .promise(
+          writeContractAsync({
+            functionName,
+            abi: VOTER_DB_ABI,
+            address: VOTER_DB_ADDRESS,
+            args,
+            account: address,
+          }),
+          {
+            loading: customToastMessages?.loading || "Waiting for wallet confirmation...",
+            success: (data) => {
+              setHash(data);
+              return (
+                customToastMessages?.success ||
+                "Transaction submitted! Waiting for confirmation..."
+              );
+            },
+            error: (err: BaseError) => {
+              return customToastMessages?.error || err.shortMessage || "Transaction failed.";
+            },
           },
-          error: (err: BaseError) => {
-            console.warn("Write Error:", err);
-            return customToastMessages?.error || err.shortMessage || "Transaction failed.";
-          },
-        },
-      )
-      .unwrap();
+        )
+        .unwrap();
 
-    setHash(txHash);
-    return { hash: txHash };
+      setHash(txHash);
+      return { hash: txHash };
+    } catch (err) {
+      const error = err as BaseError;
+      // if user intentionally rejected or denied, just warn
+      if (
+        error.shortMessage.toLowerCase().includes("user rejected") ||
+        error.shortMessage.toLowerCase().includes("user denied")
+      ) {
+        console.warn("Write Error:", error.message);
+      } else {
+        console.error("Write Error:", error);
+      }
+      return { hash: undefined };
+    }
   };
 
   return {
