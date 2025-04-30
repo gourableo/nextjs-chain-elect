@@ -11,3 +11,8 @@ export type ContractInfo = {
   };
   abi: Abi;
 };
+
+export const GenderEnum = {
+  MALE: 0,
+  FEMALE: 1,
+};
