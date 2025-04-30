@@ -43,7 +43,7 @@ export function VoterDashboard() {
         </CardContent>
       </Card>
 
-      <VoterActions voterDetails={voterDetails} onUpdate={refetch} />
+      <VoterActions voterDetails={voterDetails} onUpdateAction={refetch} />
     </div>
   );
 }

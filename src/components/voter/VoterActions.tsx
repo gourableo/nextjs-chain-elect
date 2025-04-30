@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,10 +30,10 @@ import { toast } from "sonner";
 
 export function VoterActions({
   voterDetails,
-  onUpdate,
+  onUpdateAction,
 }: {
   voterDetails: VoterDetails;
-  onUpdate: () => void;
+  onUpdateAction: () => void;
 }) {
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
 
@@ -111,7 +109,7 @@ export function VoterActions({
         <UpdateVoterDialog
           voterDetails={voterDetails}
           onClose={() => setShowUpdateDialog(false)}
-          onUpdate={onUpdate}
+          onUpdateAction={onUpdateAction}
         />
       )}
     </div>
@@ -121,11 +119,11 @@ export function VoterActions({
 function UpdateVoterDialog({
   voterDetails,
   onClose,
-  onUpdate,
+  onUpdateAction,
 }: {
   voterDetails: VoterDetails;
   onClose: () => void;
-  onUpdate: () => void;
+  onUpdateAction: () => void;
 }) {
   const [name, setName] = useState(voterDetails.name);
   const [age, setAge] = useState(voterDetails.age.toString());
@@ -152,7 +150,7 @@ function UpdateVoterDialog({
       });
 
       toast.success("Voter information updated successfully");
-      onUpdate();
+      onUpdateAction();
       onClose();
     } catch (error) {
       console.error("Update error:", error);
