@@ -1,6 +1,15 @@
 {
   "name": "nextjs-chain-elect",
   "version": "0.1.0",
+  "author": {
+    "name": "Masum Reza",
+    "url": "https://johnrtitor-portfolio-website.vercel.app/"
+  },
+  "license": "Apache-2.0",
+  "repository": "https://github.com/JohnRTitor/nextjs-chain-elect",
+  "bugs": {
+    "url": "https://github.com/JohnRTitor/nextjs-chain-elect/issues"
+  },
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
