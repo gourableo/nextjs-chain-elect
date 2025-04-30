@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import {
   Card,
@@ -11,27 +9,41 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { useAddVoter, Gender } from "@/hooks/useVoterDatabase";
 import { Loader2Icon } from "lucide-react";
-import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import { VoterFormSchema, VoterFormValues } from "@/lib/schemas/voter-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export function VoterRegistrationForm({
   onRegistrationSuccessAction,
 }: {
   onRegistrationSuccessAction: () => void;
 }) {
-  const [name, setName] = useState("");
-  const [age, setAge] = useState("");
-  const [gender, setGender] = useState<Gender>(0);
-  const [address, setAddress] = useState("");
-
   const { addVoter, isPending, isConfirming, isConfirmed } = useAddVoter();
-
   const isLoading = isPending || isConfirming;
-  const isFormValid = name.trim() && age && address.trim();
+
+  // Define the form
+  const form = useForm<VoterFormValues>({
+    resolver: valibotResolver(VoterFormSchema),
+    defaultValues: {
+      name: "",
+      age: "",
+      gender: 0,
+      presentAddress: "",
+    },
+    mode: "onBlur",
+  });
 
   // Listen for confirmation
   useEffect(() => {
@@ -40,21 +52,14 @@ export function VoterRegistrationForm({
     }
   }, [isConfirmed, onRegistrationSuccessAction]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!isFormValid) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
-
+  async function onSubmit(values: VoterFormValues) {
     await addVoter({
-      name: name.trim(),
-      age: parseInt(age),
-      gender,
-      presentAddress: address.trim(),
+      name: values.name,
+      age: Number(values.age),
+      gender: values.gender as Gender,
+      presentAddress: values.presentAddress,
     });
-  };
+  }
 
   return (
     <Card className="w-full">
@@ -65,74 +70,106 @@ export function VoterRegistrationForm({
         </CardDescription>
       </CardHeader>
 
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
-            <Input
-              id="name"
-              placeholder="Your full name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              disabled={isLoading}
-              required
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <CardContent className="space-y-6">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Full Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Your full name" {...field} disabled={isLoading} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="age">Age</Label>
-            <Input
-              id="age"
-              type="number"
-              min="18"
-              placeholder="Your age (must be 18+)"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              disabled={isLoading}
-              required
+            <FormField
+              control={form.control}
+              name="age"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Age</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Your age (must be 18+)"
+                      {...field}
+                      disabled={isLoading}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label>Gender</Label>
-            <RadioGroup
-              value={gender.toString()}
-              onValueChange={(value) => setGender(parseInt(value) as Gender)}
-              disabled={isLoading}
-              className="flex gap-4"
+            <FormField
+              control={form.control}
+              name="gender"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Gender</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      value={field.value.toString()}
+                      onValueChange={(value) => field.onChange(parseInt(value))}
+                      className="flex gap-4"
+                      disabled={isLoading}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="0" id="male" />
+                        <FormLabel htmlFor="male" className="cursor-pointer">
+                          Male
+                        </FormLabel>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="1" id="female" />
+                        <FormLabel htmlFor="female" className="cursor-pointer">
+                          Female
+                        </FormLabel>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="presentAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Present Address</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Your current address"
+                      {...field}
+                      disabled={isLoading}
+                      rows={3}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+
+          <CardFooter>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isLoading || !form.formState.isValid}
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="0" id="male" />
-                <Label htmlFor="male">Male</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="1" id="female" />
-                <Label htmlFor="female">Female</Label>
-              </div>
-            </RadioGroup>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="address">Present Address</Label>
-            <Textarea
-              id="address"
-              placeholder="Your current address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              disabled={isLoading}
-              required
-              rows={3}
-            />
-          </div>
-        </CardContent>
-
-        <CardFooter>
-          <Button type="submit" className="w-full" disabled={isLoading || !isFormValid}>
-            {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
-            {isPending ? "Submitting..." : isConfirming ? "Confirming..." : "Register as Voter"}
-          </Button>
-        </CardFooter>
-      </form>
+              {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+              {isPending ? "Submitting..." : isConfirming ? "Confirming..." : "Register as Voter"}
+            </Button>
+          </CardFooter>
+        </form>
+      </Form>
     </Card>
   );
 }

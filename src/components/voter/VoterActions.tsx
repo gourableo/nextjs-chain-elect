@@ -26,7 +26,17 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Gender, VoterDetails, useDeleteVoter, useUpdateVoter } from "@/hooks/useVoterDatabase";
 import { Loader2Icon, PencilIcon, Trash2Icon } from "lucide-react";
-import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import { VoterFormSchema, VoterFormValues } from "@/lib/schemas/voter-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 export function VoterActions({
   voterDetails,
@@ -128,13 +138,20 @@ function UpdateVoterDialog({
   onClose: () => void;
   onUpdateAction: () => void;
 }) {
-  const [name, setName] = useState(voterDetails.name);
-  const [age, setAge] = useState(voterDetails.age.toString());
-  const [gender, setGender] = useState<Gender>(voterDetails.gender);
-  const [address, setAddress] = useState(voterDetails.presentAddress);
-
   const { updateVoter, isPending, isConfirming, isConfirmed } = useUpdateVoter();
   const isProcessing = isPending || isConfirming;
+
+  // Define the form
+  const form = useForm<VoterFormValues>({
+    resolver: valibotResolver(VoterFormSchema),
+    defaultValues: {
+      name: voterDetails.name,
+      age: voterDetails.age.toString(),
+      gender: voterDetails.gender,
+      presentAddress: voterDetails.presentAddress,
+    },
+    mode: "onBlur",
+  });
 
   // Listen for confirmation
   useEffect(() => {
@@ -144,98 +161,110 @@ function UpdateVoterDialog({
     }
   }, [isConfirmed, onUpdateAction, onClose]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!name.trim() || !age || !address.trim()) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
-
+  async function onSubmit(values: VoterFormValues) {
     await updateVoter({
-      name: name.trim(),
-      age: parseInt(age),
-      gender,
-      presentAddress: address.trim(),
+      name: values.name,
+      age: Number(values.age),
+      gender: values.gender as Gender,
+      presentAddress: values.presentAddress,
     });
-  };
+  }
 
   return (
     <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[500px]">
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>Update Voter Information</DialogTitle>
-            <DialogDescription>Make changes to your voter information below.</DialogDescription>
-          </DialogHeader>
+        <DialogHeader>
+          <DialogTitle>Update Voter Information</DialogTitle>
+          <DialogDescription>Make changes to your voter information below.</DialogDescription>
+        </DialogHeader>
 
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="update-name">Full Name</Label>
-              <Input
-                id="update-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                disabled={isProcessing}
-                required
-              />
-            </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Full Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} disabled={isProcessing} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-            <div className="space-y-2">
-              <Label htmlFor="update-age">Age</Label>
-              <Input
-                id="update-age"
-                type="number"
-                min="18"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-                disabled={isProcessing}
-                required
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="age"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Age</FormLabel>
+                  <FormControl>
+                    <Input type="number" min="18" {...field} disabled={isProcessing} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-            <div className="space-y-2">
-              <Label>Gender</Label>
-              <RadioGroup
-                value={gender.toString()}
-                onValueChange={(value) => setGender(parseInt(value) as Gender)}
-                disabled={isProcessing}
-                className="flex gap-4"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="0" id="update-male" />
-                  <Label htmlFor="update-male">Male</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="1" id="update-female" />
-                  <Label htmlFor="update-female">Female</Label>
-                </div>
-              </RadioGroup>
-            </div>
+            <FormField
+              control={form.control}
+              name="gender"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Gender</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      value={field.value.toString()}
+                      onValueChange={(value) => field.onChange(parseInt(value))}
+                      disabled={isProcessing}
+                      className="flex gap-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="0" id="update-male" />
+                        <FormLabel htmlFor="update-male" className="cursor-pointer">
+                          Male
+                        </FormLabel>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="1" id="update-female" />
+                        <FormLabel htmlFor="update-female" className="cursor-pointer">
+                          Female
+                        </FormLabel>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-            <div className="space-y-2">
-              <Label htmlFor="update-address">Present Address</Label>
-              <Textarea
-                id="update-address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                disabled={isProcessing}
-                required
-                rows={3}
-              />
-            </div>
-          </div>
+            <FormField
+              control={form.control}
+              name="presentAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Present Address</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} disabled={isProcessing} rows={3} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose} disabled={isProcessing}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isProcessing}>
-              {isProcessing && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
-              {isPending ? "Submitting..." : isConfirming ? "Confirming..." : "Save Changes"}
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter className="pt-4">
+              <Button type="button" variant="outline" onClick={onClose} disabled={isProcessing}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isProcessing}>
+                {isProcessing && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+                {isPending ? "Submitting..." : isConfirming ? "Confirming..." : "Save Changes"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
