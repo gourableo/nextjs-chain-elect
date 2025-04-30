@@ -32,3 +32,21 @@ export type VoterDetails = {
   presentAddress: string;
   hasVoted: boolean;
 };
+
+export type CandidateDetails = {
+  name: string;
+  age: bigint;
+  email: string;
+  qualifications: string;
+  manifesto: string;
+  voteCount: bigint;
+  status: boolean;
+};
+
+export type CandidateContractParams = {
+  name: string;
+  age: number;
+  email: string;
+  qualifications: string;
+  manifesto: string;
+};
