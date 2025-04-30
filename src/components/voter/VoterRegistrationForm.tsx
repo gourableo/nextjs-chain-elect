@@ -37,18 +37,12 @@ export function VoterRegistrationForm() {
       return;
     }
 
-    try {
-      await addVoter({
-        name: name.trim(),
-        age: parseInt(age),
-        gender,
-        presentAddress: address.trim(),
-      });
-
-      toast.success("Registration submitted successfully");
-    } catch (error) {
-      console.error("Registration error:", error);
-    }
+    await addVoter({
+      name: name.trim(),
+      age: parseInt(age),
+      gender,
+      presentAddress: address.trim(),
+    });
   };
 
   return (

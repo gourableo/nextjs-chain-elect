@@ -39,7 +39,14 @@ export function useVoterDatabaseWriteFunction(functionName: string) {
     hash,
   });
 
-  const execute = async (args: ContractFunctionArgs = []) => {
+  const execute = async (
+    args: ContractFunctionArgs = [],
+    customToastMessages?: {
+      loading?: string;
+      success?: string;
+      error?: string;
+    },
+  ) => {
     console.log("VoterDatabase Function:", functionName, args);
     const txHash = await toast
       .promise(
@@ -51,14 +58,14 @@ export function useVoterDatabaseWriteFunction(functionName: string) {
           account: address,
         }),
         {
-          loading: "Waiting for wallet confirmation...",
+          loading: customToastMessages?.loading || "Waiting for wallet confirmation...",
           success: (data) => {
             setHash(data);
-            return "Transaction sent!";
+            return customToastMessages?.success || "Transaction sent!";
           },
           error: (err: BaseError) => {
             console.warn("Write Error:", err);
-            return err.shortMessage || "Transaction failed.";
+            return customToastMessages?.error || err.shortMessage || "Transaction failed.";
           },
         },
       )
@@ -98,13 +105,17 @@ export function useVoterDatabaseReadFunction<T>(
   };
 }
 
-// Voter Registration Operations
+// Voter Management Operations
 export function useAddVoter() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
     useVoterDatabaseWriteFunction("addVoter");
 
   const addVoter = async ({ name, age, gender, presentAddress }: AddVoterParams) => {
-    return execute([name, BigInt(age), gender, presentAddress]);
+    return execute([name, BigInt(age), gender, presentAddress], {
+      loading: "Submitting voter registration...",
+      success: "Registration submitted successfully",
+      error: "Failed to register as voter",
+    });
   };
 
   return {
@@ -121,7 +132,11 @@ export function useUpdateVoter() {
     useVoterDatabaseWriteFunction("updateVoter");
 
   const updateVoter = async ({ name, age, gender, presentAddress }: UpdateVoterParams) => {
-    return execute([name, BigInt(age), gender, presentAddress]);
+    return execute([name, BigInt(age), gender, presentAddress], {
+      loading: "Updating voter information...",
+      success: "Voter information updated successfully",
+      error: "Failed to update voter information",
+    });
   };
 
   return {
@@ -138,7 +153,11 @@ export function useDeleteVoter() {
     useVoterDatabaseWriteFunction("deleteVoter");
 
   const deleteVoter = async () => {
-    return execute();
+    return execute([], {
+      loading: "Cancelling voter registration...",
+      success: "Voter registration cancelled successfully",
+      error: "Failed to cancel voter registration",
+    });
   };
 
   return {
@@ -149,7 +168,6 @@ export function useDeleteVoter() {
     hash,
   };
 }
-
 export function useMarkVoted() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
     useVoterDatabaseWriteFunction("markVoted");

@@ -141,20 +141,15 @@ function UpdateVoterDialog({
       return;
     }
 
-    try {
-      await updateVoter({
-        name: name.trim(),
-        age: parseInt(age),
-        gender,
-        presentAddress: address.trim(),
-      });
+    await updateVoter({
+      name: name.trim(),
+      age: parseInt(age),
+      gender,
+      presentAddress: address.trim(),
+    });
 
-      toast.success("Voter information updated successfully");
-      onUpdateAction();
-      onClose();
-    } catch (error) {
-      console.error("Update error:", error);
-    }
+    onUpdateAction();
+    onClose();
   };
 
   return (
