@@ -17,14 +17,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAddVoter, Gender } from "@/hooks/useVoterDatabase";
 import { Loader2Icon } from "lucide-react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
-export function VoterRegistrationForm() {
+export function VoterRegistrationForm({
+  onRegistrationSuccessAction,
+}: {
+  onRegistrationSuccessAction: () => void;
+}) {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState<Gender>(0);
   const [address, setAddress] = useState("");
-  const router = useRouter();
 
   const { addVoter, isPending, isConfirming, isConfirmed } = useAddVoter();
 
@@ -34,9 +36,9 @@ export function VoterRegistrationForm() {
   // Listen for confirmation
   useEffect(() => {
     if (isConfirmed) {
-      router.refresh(); // Force page refresh after confirmation
+      onRegistrationSuccessAction(); // Notify parent component of successful registration
     }
-  }, [isConfirmed, router]);
+  }, [isConfirmed, onRegistrationSuccessAction]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

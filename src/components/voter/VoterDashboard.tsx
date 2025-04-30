@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useGetMyDetails } from "@/hooks/useVoterDatabase";
+import { useGetMyDetails, useGetMyRegistrationStatus } from "@/hooks/useVoterDatabase";
 import { VoterInformation } from "@/components/voter/VoterInformation";
 import { VoterActions } from "@/components/voter/VoterActions";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,19 +9,31 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { InfoIcon } from "lucide-react";
 
-export function VoterDashboard() {
+export function VoterDashboard({
+  onRegistrationStatusChangeAction,
+}: {
+  onRegistrationStatusChangeAction: (status: boolean) => void;
+}) {
   const { voterDetails, isLoading, isError, refetch } = useGetMyDetails();
+  const { refetch: refetchRegistrationStatus } = useGetMyRegistrationStatus();
 
   // Function to handle successful updates
-  const handleUpdateAction = () => {
+  const handleUpdateAction = async () => {
+    // Refetch voter details
     refetch();
+
+    // Check registration status and notify parent if changed
+    const registrationResult = await refetchRegistrationStatus();
+    if (registrationResult.data === false) {
+      onRegistrationStatusChangeAction(false);
+    }
   };
 
   useEffect(() => {
-    // Set up an interval to periodically refetch data
+    // Set up an interval to periodically refetch data (less frequently)
     const interval = setInterval(() => {
       refetch();
-    }, 10000); // Refetch every 10 seconds to catch any changes
+    }, 30000); // Reduced to every 30 seconds to be less aggressive
 
     return () => clearInterval(interval);
   }, [refetch]);

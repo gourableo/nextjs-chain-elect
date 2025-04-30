@@ -27,7 +27,6 @@ import {
 import { Gender, VoterDetails, useDeleteVoter, useUpdateVoter } from "@/hooks/useVoterDatabase";
 import { Loader2Icon, PencilIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 export function VoterActions({
   voterDetails,
@@ -37,7 +36,6 @@ export function VoterActions({
   onUpdateAction: () => void;
 }) {
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
-  const router = useRouter();
 
   const {
     deleteVoter,
@@ -50,10 +48,9 @@ export function VoterActions({
   // Listen for confirmation of deletion
   useEffect(() => {
     if (isDeletionConfirmed) {
-      onUpdateAction();
-      router.refresh();
+      onUpdateAction(); // Just call the update function, don't refresh the router here
     }
-  }, [isDeletionConfirmed, onUpdateAction, router]);
+  }, [isDeletionConfirmed, onUpdateAction]);
 
   const handleDelete = async () => {
     await deleteVoter();

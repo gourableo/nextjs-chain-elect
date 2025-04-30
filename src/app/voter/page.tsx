@@ -5,19 +5,26 @@ import { VoterRegistrationForm } from "@/components/voter/VoterRegistrationForm"
 import { VoterDashboard } from "@/components/voter/VoterDashboard";
 import { useGetMyRegistrationStatus } from "@/hooks/useVoterDatabase";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function VoterPage() {
-  const { isRegistered, isLoading, refetch } = useGetMyRegistrationStatus();
+  const { isRegistered: initialRegStatus, isLoading: initialLoading } =
+    useGetMyRegistrationStatus();
+  const [isRegistered, setIsRegistered] = useState<boolean | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Periodically check registration status to catch any changes
+  // Set initial registration status
   useEffect(() => {
-    const interval = setInterval(() => {
-      refetch();
-    }, 10000); // Refetch every 10 seconds
+    if (!initialLoading) {
+      setIsRegistered(initialRegStatus);
+      setIsLoading(false);
+    }
+  }, [initialRegStatus, initialLoading]);
 
-    return () => clearInterval(interval);
-  }, [refetch]);
+  // Handle registration status changes
+  const handleRegistrationStatusChange = (newStatus: boolean) => {
+    setIsRegistered(newStatus);
+  };
 
   return (
     <div className="container max-w-4xl py-8">
@@ -29,9 +36,11 @@ export default function VoterPage() {
       {isLoading ? (
         <LoadingSpinner message="Checking your registration status..." />
       ) : isRegistered ? (
-        <VoterDashboard />
+        <VoterDashboard onRegistrationStatusChangeAction={handleRegistrationStatusChange} />
       ) : (
-        <VoterRegistrationForm />
+        <VoterRegistrationForm
+          onRegistrationSuccessAction={() => handleRegistrationStatusChange(true)}
+        />
       )}
     </div>
   );
