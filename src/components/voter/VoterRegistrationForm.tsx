@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -17,17 +17,26 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAddVoter, Gender } from "@/hooks/useVoterDatabase";
 import { Loader2Icon } from "lucide-react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export function VoterRegistrationForm() {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState<Gender>(0);
   const [address, setAddress] = useState("");
+  const router = useRouter();
 
-  const { addVoter, isPending, isConfirming } = useAddVoter();
+  const { addVoter, isPending, isConfirming, isConfirmed } = useAddVoter();
 
   const isLoading = isPending || isConfirming;
   const isFormValid = name.trim() && age && address.trim();
+
+  // Listen for confirmation
+  useEffect(() => {
+    if (isConfirmed) {
+      router.refresh(); // Force page refresh after confirmation
+    }
+  }, [isConfirmed, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,7 +127,7 @@ export function VoterRegistrationForm() {
         <CardFooter>
           <Button type="submit" className="w-full" disabled={isLoading || !isFormValid}>
             {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
-            {isLoading ? "Processing..." : "Register as Voter"}
+            {isPending ? "Submitting..." : isConfirming ? "Confirming..." : "Register as Voter"}
           </Button>
         </CardFooter>
       </form>

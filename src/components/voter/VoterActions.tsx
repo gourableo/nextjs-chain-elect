@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -27,6 +27,7 @@ import {
 import { Gender, VoterDetails, useDeleteVoter, useUpdateVoter } from "@/hooks/useVoterDatabase";
 import { Loader2Icon, PencilIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export function VoterActions({
   voterDetails,
@@ -36,18 +37,30 @@ export function VoterActions({
   onUpdateAction: () => void;
 }) {
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
+  const router = useRouter();
 
   const {
     deleteVoter,
     isPending: isDeleting,
     isConfirming: isDeletionConfirming,
+    isConfirmed: isDeletionConfirmed,
   } = useDeleteVoter();
   const isDeleteProcessing = isDeleting || isDeletionConfirming;
+
+  // Listen for confirmation of deletion
+  useEffect(() => {
+    if (isDeletionConfirmed) {
+      onUpdateAction();
+      router.refresh();
+    }
+  }, [isDeletionConfirmed, onUpdateAction, router]);
 
   const handleDelete = async () => {
     try {
       await deleteVoter();
-      toast.success("Voter registration cancelled successfully");
+      // The toast for submission is handled in the hook
+      // The toast for confirmation is handled in the hook
+      // The UI will refresh via the useEffect above
     } catch (error) {
       console.error("Deletion error:", error);
     }
@@ -74,7 +87,7 @@ export function VoterActions({
                 {isDeleteProcessing ? (
                   <>
                     <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                    Processing...
+                    {isDeletionConfirming ? "Confirming..." : "Processing..."}
                   </>
                 ) : (
                   <>
@@ -130,8 +143,16 @@ function UpdateVoterDialog({
   const [gender, setGender] = useState<Gender>(voterDetails.gender);
   const [address, setAddress] = useState(voterDetails.presentAddress);
 
-  const { updateVoter, isPending, isConfirming } = useUpdateVoter();
+  const { updateVoter, isPending, isConfirming, isConfirmed } = useUpdateVoter();
   const isProcessing = isPending || isConfirming;
+
+  // Listen for confirmation
+  useEffect(() => {
+    if (isConfirmed) {
+      onUpdateAction();
+      onClose(); // Close the dialog after confirmation
+    }
+  }, [isConfirmed, onUpdateAction, onClose]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,9 +168,6 @@ function UpdateVoterDialog({
       gender,
       presentAddress: address.trim(),
     });
-
-    onUpdateAction();
-    onClose();
   };
 
   return (
@@ -224,7 +242,7 @@ function UpdateVoterDialog({
             </Button>
             <Button type="submit" disabled={isProcessing}>
               {isProcessing && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
-              {isProcessing ? "Updating..." : "Save Changes"}
+              {isPending ? "Submitting..." : isConfirming ? "Confirming..." : "Save Changes"}
             </Button>
           </DialogFooter>
         </form>

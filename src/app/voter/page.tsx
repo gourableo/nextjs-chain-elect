@@ -5,9 +5,19 @@ import { VoterRegistrationForm } from "@/components/voter/VoterRegistrationForm"
 import { VoterDashboard } from "@/components/voter/VoterDashboard";
 import { useGetMyRegistrationStatus } from "@/hooks/useVoterDatabase";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { useEffect } from "react";
 
 export default function VoterPage() {
-  const { isRegistered, isLoading } = useGetMyRegistrationStatus();
+  const { isRegistered, isLoading, refetch } = useGetMyRegistrationStatus();
+
+  // Periodically check registration status to catch any changes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetch();
+    }, 10000); // Refetch every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [refetch]);
 
   return (
     <div className="container max-w-4xl py-8">

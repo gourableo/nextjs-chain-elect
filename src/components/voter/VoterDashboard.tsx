@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useGetMyDetails } from "@/hooks/useVoterDatabase";
 import { VoterInformation } from "@/components/voter/VoterInformation";
 import { VoterActions } from "@/components/voter/VoterActions";
@@ -10,6 +11,20 @@ import { InfoIcon } from "lucide-react";
 
 export function VoterDashboard() {
   const { voterDetails, isLoading, isError, refetch } = useGetMyDetails();
+
+  // Function to handle successful updates
+  const handleUpdateAction = () => {
+    refetch();
+  };
+
+  useEffect(() => {
+    // Set up an interval to periodically refetch data
+    const interval = setInterval(() => {
+      refetch();
+    }, 10000); // Refetch every 10 seconds to catch any changes
+
+    return () => clearInterval(interval);
+  }, [refetch]);
 
   if (isLoading) {
     return <LoadingSpinner message="Loading your voter information..." />;
@@ -43,7 +58,7 @@ export function VoterDashboard() {
         </CardContent>
       </Card>
 
-      <VoterActions voterDetails={voterDetails} onUpdateAction={refetch} />
+      <VoterActions voterDetails={voterDetails} onUpdateAction={handleUpdateAction} />
     </div>
   );
 }

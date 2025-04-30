@@ -7,7 +7,7 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ContractFunctionArgs } from "viem";
 
 export type Gender = 0 | 1; // 0 = Male, 1 = Female
@@ -39,12 +39,20 @@ export function useVoterDatabaseWriteFunction(functionName: string) {
     hash,
   });
 
+  // Listen for transaction confirmation
+  useEffect(() => {
+    if (isConfirmed && hash) {
+      toast.success("Transaction confirmed on the blockchain");
+    }
+  }, [isConfirmed, hash]);
+
   const execute = async (
     args: ContractFunctionArgs = [],
     customToastMessages?: {
       loading?: string;
       success?: string;
       error?: string;
+      confirmed?: string; // Add confirmed message
     },
   ) => {
     console.log("VoterDatabase Function:", functionName, args);
@@ -61,7 +69,9 @@ export function useVoterDatabaseWriteFunction(functionName: string) {
           loading: customToastMessages?.loading || "Waiting for wallet confirmation...",
           success: (data) => {
             setHash(data);
-            return customToastMessages?.success || "Transaction sent!";
+            return (
+              customToastMessages?.success || "Transaction submitted! Waiting for confirmation..."
+            );
           },
           error: (err: BaseError) => {
             console.warn("Write Error:", err);
@@ -113,8 +123,9 @@ export function useAddVoter() {
   const addVoter = async ({ name, age, gender, presentAddress }: AddVoterParams) => {
     return execute([name, BigInt(age), gender, presentAddress], {
       loading: "Submitting voter registration...",
-      success: "Registration submitted successfully",
+      success: "Registration submitted! Waiting for blockchain confirmation...",
       error: "Failed to register as voter",
+      confirmed: "Your voter registration has been confirmed!",
     });
   };
 
@@ -134,8 +145,9 @@ export function useUpdateVoter() {
   const updateVoter = async ({ name, age, gender, presentAddress }: UpdateVoterParams) => {
     return execute([name, BigInt(age), gender, presentAddress], {
       loading: "Updating voter information...",
-      success: "Voter information updated successfully",
+      success: "Update submitted! Waiting for blockchain confirmation...",
       error: "Failed to update voter information",
+      confirmed: "Your voter information has been updated successfully!",
     });
   };
 
@@ -155,8 +167,9 @@ export function useDeleteVoter() {
   const deleteVoter = async () => {
     return execute([], {
       loading: "Cancelling voter registration...",
-      success: "Voter registration cancelled successfully",
+      success: "Cancellation submitted! Waiting for blockchain confirmation...",
       error: "Failed to cancel voter registration",
+      confirmed: "Your voter registration has been cancelled successfully!",
     });
   };
 
@@ -168,6 +181,7 @@ export function useDeleteVoter() {
     hash,
   };
 }
+
 export function useMarkVoted() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
     useVoterDatabaseWriteFunction("markVoted");
