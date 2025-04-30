@@ -9,25 +9,7 @@ import {
 } from "wagmi";
 import { useEffect, useState } from "react";
 import { ContractFunctionArgs } from "viem";
-
-export type Gender = 0 | 1; // 0 = Male, 1 = Female
-
-export type AddVoterParams = {
-  name: string;
-  age: number;
-  gender: Gender;
-  presentAddress: string;
-};
-
-export type UpdateVoterParams = AddVoterParams;
-
-export type VoterDetails = {
-  name: string;
-  age: bigint;
-  gender: Gender;
-  presentAddress: string;
-  hasVoted: boolean;
-};
+import { Gender, VoterContractParams, VoterDetails } from "@/types";
 
 // CORE HOOKS FOR READ AND WRITE OPERATIONS
 export function useVoterDatabaseWriteFunction(functionName: string) {
@@ -134,7 +116,7 @@ export function useAddVoter() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
     useVoterDatabaseWriteFunction("addVoter");
 
-  const addVoter = async ({ name, age, gender, presentAddress }: AddVoterParams) => {
+  const addVoter = async ({ name, age, gender, presentAddress }: VoterContractParams) => {
     return execute([name, BigInt(age), gender, presentAddress], {
       loading: "Submitting voter registration...",
       success: "Registration submitted! Waiting for blockchain confirmation...",
@@ -156,7 +138,7 @@ export function useUpdateVoter() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
     useVoterDatabaseWriteFunction("updateVoter");
 
-  const updateVoter = async ({ name, age, gender, presentAddress }: UpdateVoterParams) => {
+  const updateVoter = async ({ name, age, gender, presentAddress }: VoterContractParams) => {
     return execute([name, BigInt(age), gender, presentAddress], {
       loading: "Updating voter information...",
       success: "Update submitted! Waiting for blockchain confirmation...",
@@ -279,7 +261,7 @@ export function useAdminAddVoter() {
 
   const adminAddVoter = async (
     voterAddress: `0x${string}`,
-    { name, age, gender, presentAddress }: AddVoterParams,
+    { name, age, gender, presentAddress }: VoterContractParams,
     hasVoted: boolean = false,
   ) => {
     return execute([voterAddress, name, BigInt(age), gender, presentAddress, hasVoted]);
@@ -300,7 +282,7 @@ export function useAdminUpdateVoter() {
 
   const adminUpdateVoter = async (
     voterAddress: `0x${string}`,
-    { name, age, gender, presentAddress }: UpdateVoterParams,
+    { name, age, gender, presentAddress }: VoterContractParams,
     hasVoted: boolean,
   ) => {
     return execute([voterAddress, name, BigInt(age), gender, presentAddress, hasVoted]);

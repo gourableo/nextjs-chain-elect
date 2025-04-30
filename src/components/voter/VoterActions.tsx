@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -24,7 +24,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Gender, VoterDetails, useDeleteVoter, useUpdateVoter } from "@/hooks/useVoterDatabase";
+import { useDeleteVoter, useUpdateVoter } from "@/hooks/useVoterDatabase";
 import { Loader2Icon, PencilIcon, Trash2Icon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
@@ -37,6 +37,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Gender, VoterDetails } from "@/types";
 
 export function VoterActions({
   voterDetails,
@@ -146,7 +147,7 @@ function UpdateVoterDialog({
     resolver: valibotResolver(VoterFormSchema),
     defaultValues: {
       name: voterDetails.name,
-      age: voterDetails.age.toString(),
+      age: Number(voterDetails.age),
       gender: voterDetails.gender,
       presentAddress: voterDetails.presentAddress,
     },
@@ -164,7 +165,7 @@ function UpdateVoterDialog({
   async function onSubmit(values: VoterFormValues) {
     await updateVoter({
       name: values.name,
-      age: Number(values.age),
+      age: values.age,
       gender: values.gender as Gender,
       presentAddress: values.presentAddress,
     });
@@ -201,7 +202,24 @@ function UpdateVoterDialog({
                 <FormItem>
                   <FormLabel>Age</FormLabel>
                   <FormControl>
-                    <Input type="number" min="18" {...field} disabled={isProcessing} />
+                    <Input
+                      type="number"
+                      min="18"
+                      step="1"
+                      onKeyDown={(e) => {
+                        // Block decimal point (.) input
+                        if (e.key === "." || e.key === ",") {
+                          e.preventDefault();
+                        }
+                      }}
+                      {...field}
+                      onChange={(e) => {
+                        // Convert to integer by dropping any decimals
+                        const value = parseInt(e.target.value);
+                        field.onChange(isNaN(value) ? "" : value);
+                      }}
+                      disabled={isProcessing}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

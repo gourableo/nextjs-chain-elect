@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useAddVoter, Gender } from "@/hooks/useVoterDatabase";
+import { useAddVoter } from "@/hooks/useVoterDatabase";
 import { Loader2Icon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
@@ -38,7 +38,7 @@ export function VoterRegistrationForm({
     resolver: valibotResolver(VoterFormSchema),
     defaultValues: {
       name: "",
-      age: "",
+      age: undefined,
       gender: 0,
       presentAddress: "",
     },
@@ -55,8 +55,8 @@ export function VoterRegistrationForm({
   async function onSubmit(values: VoterFormValues) {
     await addVoter({
       name: values.name,
-      age: Number(values.age),
-      gender: values.gender as Gender,
+      age: values.age,
+      gender: values.gender,
       presentAddress: values.presentAddress,
     });
   }
@@ -97,7 +97,20 @@ export function VoterRegistrationForm({
                     <Input
                       type="number"
                       placeholder="Your age (must be 18+)"
-                      {...field}
+                      min="18"
+                      step="1"
+                      onKeyDown={(e) => {
+                        // Block decimal point (.) input
+                        if (e.key === "." || e.key === ",") {
+                          e.preventDefault();
+                        }
+                      }}
+                      value={field.value || ""}
+                      onChange={(e) => {
+                        // Convert to integer by dropping any decimals
+                        const value = parseInt(e.target.value);
+                        field.onChange(isNaN(value) ? undefined : value);
+                      }}
                       disabled={isLoading}
                     />
                   </FormControl>

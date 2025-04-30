@@ -1,6 +1,6 @@
 "use client";
 
-import { VoterDetails } from "@/hooks/useVoterDatabase";
+import { VoterDetails } from "@/types";
 
 export function VoterInformation({ voterDetails }: { voterDetails: VoterDetails }) {
   return (

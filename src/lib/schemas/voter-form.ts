@@ -11,16 +11,12 @@ export const VoterFormSchema = v.object({
     v.maxLength(100, "Name must be less than 100 characters"),
   ),
   age: v.pipe(
-    v.string("Age must be a string"),
-    v.nonEmpty("Age is required"),
-    v.transform((value) => parseInt(value, 10)),
     v.number("Age must be a number"),
     v.integer("Age must be a whole number"),
     v.minValue(18, "Must be at least 18 years old"),
     v.maxValue(120, "Age cannot be more than 120"),
   ),
   gender: v.pipe(
-    v.number("Gender must be selected"),
     v.picklist([GenderEnum.MALE, GenderEnum.FEMALE] as const, "Please select a gender"),
   ),
   presentAddress: v.pipe(
