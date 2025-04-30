@@ -5,6 +5,7 @@ import * as v from "valibot";
 export const VoterFormSchema = v.object({
   name: v.pipe(
     v.string("Name must be a string"),
+    v.transform((val) => val.trim()), // Trim whitespace
     v.nonEmpty("Full name is required"),
     v.minLength(2, "Name must be at least 2 characters"),
     v.maxLength(100, "Name must be less than 100 characters"),
@@ -24,6 +25,7 @@ export const VoterFormSchema = v.object({
   ),
   presentAddress: v.pipe(
     v.string("Address must be a string"),
+    v.transform((val) => val.trim()), // Trim whitespace
     v.nonEmpty("Address is required"),
     v.minLength(5, "Address must be at least 5 characters"),
     v.maxLength(500, "Address must be less than 500 characters"),
