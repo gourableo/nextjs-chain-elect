@@ -1,6 +1,6 @@
 {
   "addresses": {
-    "sepolia": "0x5F0cdc5bd3DE340f99733cA80F6A4684E97A8CF1"
+    "sepolia": "0x6003cA557d45E08Bb2C572439b8eFC2631D0644F"
   },
   "abi": [
     {
@@ -108,6 +108,25 @@
         }
       ],
       "name": "AdminRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "candidate",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "admin",
+          "type": "address"
+        }
+      ],
+      "name": "AdminRemovedCandidate",
       "type": "event"
     },
     {
@@ -346,6 +365,19 @@
           "internalType": "address",
           "name": "_candidateAddress",
           "type": "address"
+        }
+      ],
+      "name": "adminRemoveCandidate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_candidateAddress",
+          "type": "address"
         },
         {
           "internalType": "string",
@@ -402,13 +434,7 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_candidateAddress",
-          "type": "address"
-        }
-      ],
+      "inputs": [],
       "name": "deleteCandidate",
       "outputs": [],
       "stateMutability": "nonpayable",
