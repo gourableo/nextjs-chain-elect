@@ -36,16 +36,19 @@ export type VoterDetails = {
 export type CandidateDetails = {
   name: string;
   age: bigint;
+  gender: Gender;
+  presentAddress: string;
   email: string;
   qualifications: string;
   manifesto: string;
-  voteCount: bigint;
-  status: boolean;
+  registrationTimestamp: bigint;
 };
 
 export type CandidateContractParams = {
   name: string;
   age: number;
+  gender: Gender;
+  presentAddress: string;
   email: string;
   qualifications: string;
   manifesto: string;

@@ -9,7 +9,7 @@ import {
 } from "wagmi";
 import { useEffect, useState } from "react";
 import { ContractFunctionArgs } from "viem";
-import { CandidateContractParams, CandidateDetails } from "@/types";
+import { CandidateContractParams, CandidateDetails, Gender } from "@/types";
 
 // CORE HOOKS FOR READ AND WRITE OPERATIONS
 export function useCandidateDatabaseWriteFunction(functionName: string) {
@@ -119,11 +119,13 @@ export function useAddCandidate() {
   const addCandidate = async ({
     name,
     age,
+    gender,
+    presentAddress,
     email,
     qualifications,
     manifesto,
   }: CandidateContractParams) => {
-    return execute([name, BigInt(age), email, qualifications, manifesto], {
+    return execute([name, BigInt(age), gender, presentAddress, email, qualifications, manifesto], {
       loading: "Submitting candidate registration...",
       success: "Registration submitted! Waiting for blockchain confirmation...",
       error: "Failed to register as candidate",
@@ -147,11 +149,13 @@ export function useUpdateCandidate() {
   const updateCandidate = async ({
     name,
     age,
+    gender,
+    presentAddress,
     email,
     qualifications,
     manifesto,
   }: CandidateContractParams) => {
-    return execute([name, BigInt(age), email, qualifications, manifesto], {
+    return execute([name, BigInt(age), gender, presentAddress, email, qualifications, manifesto], {
       loading: "Updating candidate information...",
       success: "Update submitted! Waiting for blockchain confirmation...",
       error: "Failed to update candidate information",
@@ -191,21 +195,48 @@ export function useDeleteCandidate() {
 }
 
 // Candidate Information Reading
-export function useGetMyDetails() {
+export function useGetMyCandidateDetails() {
   const { data, isLoading, isError, refetch } =
-    useCandidateDatabaseReadFunction<[string, bigint, string, string, string, bigint, boolean]>(
-      "getMyDetails",
-    );
+    useCandidateDatabaseReadFunction<
+      [string, bigint, Gender, string, string, string, string, bigint]
+    >("getMyCandidateDetails");
 
   const formattedData: CandidateDetails | undefined = data
     ? {
         name: data[0],
         age: data[1],
-        email: data[2],
-        qualifications: data[3],
-        manifesto: data[4],
-        voteCount: data[5],
-        status: data[6],
+        gender: data[2],
+        presentAddress: data[3],
+        email: data[4],
+        qualifications: data[5],
+        manifesto: data[6],
+        registrationTimestamp: data[7],
+      }
+    : undefined;
+
+  return {
+    candidateDetails: formattedData,
+    isLoading,
+    isError,
+    refetch,
+  };
+}
+
+export function useGetCandidateDetails(candidateAddress: `0x${string}` | undefined) {
+  const { data, isLoading, isError, refetch } = useCandidateDatabaseReadFunction<
+    [string, bigint, Gender, string, string, string, string, bigint]
+  >("getCandidateDetails", candidateAddress ? [candidateAddress] : undefined);
+
+  const formattedData: CandidateDetails | undefined = data
+    ? {
+        name: data[0],
+        age: data[1],
+        gender: data[2],
+        presentAddress: data[3],
+        email: data[4],
+        qualifications: data[5],
+        manifesto: data[6],
+        registrationTimestamp: data[7],
       }
     : undefined;
 
@@ -230,12 +261,14 @@ export function useGetMyRegistrationStatus() {
   };
 }
 
-export function useGetMyVoteCount() {
-  const { data, isLoading, isError, refetch } =
-    useCandidateDatabaseReadFunction<bigint>("getMyVoteCount");
+export function useGetCandidateRegistrationStatus(candidateAddress: `0x${string}` | undefined) {
+  const { data, isLoading, isError, refetch } = useCandidateDatabaseReadFunction<boolean>(
+    "getCandidateRegistrationStatus",
+    candidateAddress ? [candidateAddress] : undefined,
+  );
 
   return {
-    voteCount: data,
+    isRegistered: data,
     isLoading,
     isError,
     refetch,
@@ -261,19 +294,25 @@ export function useAdminAddCandidate() {
 
   const adminAddCandidate = async (
     candidateAddress: `0x${string}`,
-    { name, age, email, qualifications, manifesto }: CandidateContractParams,
-    voteCount: bigint = BigInt(0),
-    status: boolean = true,
+    {
+      name,
+      age,
+      gender,
+      presentAddress,
+      email,
+      qualifications,
+      manifesto,
+    }: CandidateContractParams,
   ) => {
     return execute([
       candidateAddress,
       name,
       BigInt(age),
+      gender,
+      presentAddress,
       email,
       qualifications,
       manifesto,
-      voteCount,
-      status,
     ]);
   };
 
@@ -292,19 +331,25 @@ export function useAdminUpdateCandidate() {
 
   const adminUpdateCandidate = async (
     candidateAddress: `0x${string}`,
-    { name, age, email, qualifications, manifesto }: CandidateContractParams,
-    voteCount: bigint,
-    status: boolean,
+    {
+      name,
+      age,
+      gender,
+      presentAddress,
+      email,
+      qualifications,
+      manifesto,
+    }: CandidateContractParams,
   ) => {
     return execute([
       candidateAddress,
       name,
       BigInt(age),
+      gender,
+      presentAddress,
       email,
       qualifications,
       manifesto,
-      voteCount,
-      status,
     ]);
   };
 
@@ -334,72 +379,10 @@ export function useAdminRemoveCandidate() {
   };
 }
 
-export function useAdminSetCandidateStatus() {
-  const { execute, isPending, isConfirming, isConfirmed, hash } =
-    useCandidateDatabaseWriteFunction("adminSetCandidateStatus");
-
-  const adminSetCandidateStatus = async (candidateAddress: `0x${string}`, status: boolean) => {
-    return execute([candidateAddress, status]);
-  };
-
-  return {
-    adminSetCandidateStatus,
-    isPending,
-    isConfirming,
-    isConfirmed,
-    hash,
-  };
-}
-
-export function useAdminSetCandidateVoteCount() {
-  const { execute, isPending, isConfirming, isConfirmed, hash } =
-    useCandidateDatabaseWriteFunction("adminSetCandidateVoteCount");
-
-  const adminSetCandidateVoteCount = async (
-    candidateAddress: `0x${string}`,
-    voteCount: bigint,
-  ) => {
-    return execute([candidateAddress, voteCount]);
-  };
-
-  return {
-    adminSetCandidateVoteCount,
-    isPending,
-    isConfirming,
-    isConfirmed,
-    hash,
-  };
-}
-
 // Admin Data Reading
-export function useAdminGetCandidateDetails(candidateAddress: `0x${string}` | undefined) {
-  const { data, isLoading, isError, refetch } = useCandidateDatabaseReadFunction<
-    [string, bigint, string, string, string, bigint, boolean]
-  >("adminGetCandidateDetails", candidateAddress ? [candidateAddress] : undefined);
-
-  const formattedData: CandidateDetails | undefined = data
-    ? {
-        name: data[0],
-        age: data[1],
-        email: data[2],
-        qualifications: data[3],
-        manifesto: data[4],
-        voteCount: data[5],
-        status: data[6],
-      }
-    : undefined;
-
-  return {
-    candidateDetails: formattedData,
-    isLoading,
-    isError,
-    refetch,
-  };
-}
-
-export function useAdminGetCandidateCount() {
+export function useGetCandidateCount() {
   const { data, isLoading, isError, refetch } =
-    useCandidateDatabaseReadFunction<bigint>("adminGetCandidateCount");
+    useCandidateDatabaseReadFunction<bigint>("getCandidateCount");
 
   return {
     candidateCount: data,
@@ -409,24 +392,12 @@ export function useAdminGetCandidateCount() {
   };
 }
 
-export function useAdminGetAllCandidates() {
+export function useGetAllCandidates() {
   const { data, isLoading, isError, refetch } =
-    useCandidateDatabaseReadFunction<`0x${string}`[]>("adminGetAllCandidates");
+    useCandidateDatabaseReadFunction<`0x${string}`[]>("getAllCandidates");
 
   return {
     candidates: data,
-    isLoading,
-    isError,
-    refetch,
-  };
-}
-
-export function useGetActiveCandidates() {
-  const { data, isLoading, isError, refetch } =
-    useCandidateDatabaseReadFunction<`0x${string}`[]>("getActiveCandidates");
-
-  return {
-    activeCandidates: data,
     isLoading,
     isError,
     refetch,
@@ -474,6 +445,18 @@ export function useGetAllAdmins() {
 
   return {
     admins: data,
+    isLoading,
+    isError,
+    refetch,
+  };
+}
+
+export function useGetAdminCount() {
+  const { data, isLoading, isError, refetch } =
+    useCandidateDatabaseReadFunction<bigint>("getAdminCount");
+
+  return {
+    adminCount: data,
     isLoading,
     isError,
     refetch,
