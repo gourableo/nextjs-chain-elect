@@ -4,7 +4,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Candidate Portal | Chain-Elect",
   description:
-    "Register as a candidate or manage your candidate information for blockchain-based elections",
+    "Register as a candidate or manage your candidacy information for blockchain-based elections",
 };
 
 export default function CandidatePageLayout({ children }: { children: React.ReactNode }) {

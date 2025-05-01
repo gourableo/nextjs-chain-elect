@@ -30,7 +30,7 @@ export default function CandidatePage() {
     <div className="container max-w-4xl py-8">
       <PageHeader
         title="Candidate Portal"
-        description="Register as a candidate or manage your candidate information"
+        description="Register as a candidate or manage your candidacy information"
       />
 
       {isLoading ? (

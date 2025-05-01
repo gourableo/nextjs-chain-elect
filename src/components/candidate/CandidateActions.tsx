@@ -10,6 +10,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import {
   AlertDialog,
@@ -35,7 +37,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { CandidateDetails } from "@/types";
+import { CandidateDetails, Gender } from "@/types";
 
 export function CandidateActions({
   candidateDetails,
@@ -90,7 +92,7 @@ export function CandidateActions({
                   </>
                 ) : (
                   <>
-                    <Trash2Icon className="mr-2 h-4 w-4" /> Withdraw Candidacy
+                    <Trash2Icon className="mr-2 h-4 w-4" /> Cancel Candidacy
                   </>
                 )}
               </Button>
@@ -99,8 +101,8 @@ export function CandidateActions({
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action will withdraw your candidacy. You will need to register again if you
-                  want to participate as a candidate in the future.
+                  This action will cancel your candidacy. You will need to register again if you
+                  want to run as a candidate in the future.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -109,7 +111,7 @@ export function CandidateActions({
                   onClick={handleDelete}
                   className="bg-destructive text-destructive-foreground"
                 >
-                  Yes, withdraw candidacy
+                  Yes, cancel candidacy
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -146,6 +148,8 @@ function UpdateCandidateDialog({
     defaultValues: {
       name: candidateDetails.name,
       age: Number(candidateDetails.age),
+      gender: candidateDetails.gender,
+      presentAddress: candidateDetails.presentAddress,
       email: candidateDetails.email,
       qualifications: candidateDetails.qualifications,
       manifesto: candidateDetails.manifesto,
@@ -165,6 +169,8 @@ function UpdateCandidateDialog({
     await updateCandidate({
       name: values.name,
       age: values.age,
+      gender: values.gender as Gender,
+      presentAddress: values.presentAddress,
       email: values.email,
       qualifications: values.qualifications,
       manifesto: values.manifesto,
@@ -173,10 +179,10 @@ function UpdateCandidateDialog({
 
   return (
     <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Update Candidate Information</DialogTitle>
-          <DialogDescription>Make changes to your candidate information below.</DialogDescription>
+          <DialogDescription>Make changes to your candidacy information below.</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -189,6 +195,20 @@ function UpdateCandidateDialog({
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
                     <Input {...field} disabled={isProcessing} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="email" {...field} disabled={isProcessing} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -228,12 +248,44 @@ function UpdateCandidateDialog({
 
             <FormField
               control={form.control}
-              name="email"
+              name="gender"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Address</FormLabel>
+                  <FormLabel>Gender</FormLabel>
                   <FormControl>
-                    <Input type="email" {...field} disabled={isProcessing} />
+                    <RadioGroup
+                      value={field.value.toString()}
+                      onValueChange={(value) => field.onChange(parseInt(value))}
+                      disabled={isProcessing}
+                      className="flex gap-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="0" id="update-male" />
+                        <FormLabel htmlFor="update-male" className="cursor-pointer">
+                          Male
+                        </FormLabel>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="1" id="update-female" />
+                        <FormLabel htmlFor="update-female" className="cursor-pointer">
+                          Female
+                        </FormLabel>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="presentAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Present Address</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} disabled={isProcessing} rows={2} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -261,7 +313,7 @@ function UpdateCandidateDialog({
                 <FormItem>
                   <FormLabel>Manifesto</FormLabel>
                   <FormControl>
-                    <Textarea {...field} disabled={isProcessing} rows={5} />
+                    <Textarea {...field} disabled={isProcessing} rows={4} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

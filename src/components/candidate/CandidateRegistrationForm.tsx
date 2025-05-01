@@ -23,6 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export function CandidateRegistrationForm({
   onRegistrationSuccessAction,
@@ -38,6 +39,8 @@ export function CandidateRegistrationForm({
     defaultValues: {
       name: "",
       age: undefined,
+      gender: 0,
+      presentAddress: "",
       email: "",
       qualifications: "",
       manifesto: "",
@@ -56,6 +59,8 @@ export function CandidateRegistrationForm({
     await addCandidate({
       name: values.name,
       age: values.age,
+      gender: values.gender,
+      presentAddress: values.presentAddress,
       email: values.email,
       qualifications: values.qualifications,
       manifesto: values.manifesto,
@@ -82,6 +87,25 @@ export function CandidateRegistrationForm({
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
                     <Input placeholder="Your full name" {...field} disabled={isLoading} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="Your email address"
+                      {...field}
+                      disabled={isLoading}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -122,12 +146,49 @@ export function CandidateRegistrationForm({
 
             <FormField
               control={form.control}
-              name="email"
+              name="gender"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Address</FormLabel>
+                  <FormLabel>Gender</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="Your email" {...field} disabled={isLoading} />
+                    <RadioGroup
+                      value={field.value.toString()}
+                      onValueChange={(value) => field.onChange(parseInt(value))}
+                      className="flex gap-4"
+                      disabled={isLoading}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="0" id="male" />
+                        <FormLabel htmlFor="male" className="cursor-pointer">
+                          Male
+                        </FormLabel>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="1" id="female" />
+                        <FormLabel htmlFor="female" className="cursor-pointer">
+                          Female
+                        </FormLabel>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="presentAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Present Address</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Your current address"
+                      {...field}
+                      disabled={isLoading}
+                      rows={2}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -161,10 +222,10 @@ export function CandidateRegistrationForm({
                   <FormLabel>Manifesto</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Your election manifesto and plans"
+                      placeholder="Your election manifesto and vision for the future"
                       {...field}
                       disabled={isLoading}
-                      rows={5}
+                      rows={4}
                     />
                   </FormControl>
                   <FormMessage />

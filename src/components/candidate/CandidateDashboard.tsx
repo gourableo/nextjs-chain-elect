@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import { useGetMyDetails, useGetMyRegistrationStatus } from "@/hooks/useCandidateDatabase";
+import {
+  useGetMyCandidateDetails,
+  useGetMyRegistrationStatus,
+} from "@/hooks/useCandidateDatabase";
 import { CandidateInformation } from "@/components/candidate/CandidateInformation";
 import { CandidateActions } from "@/components/candidate/CandidateActions";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,7 +17,7 @@ export function CandidateDashboard({
 }: {
   onRegistrationStatusChangeAction: (status: boolean) => void;
 }) {
-  const { candidateDetails, isLoading, isError, refetch } = useGetMyDetails();
+  const { candidateDetails, isLoading, isError, refetch } = useGetMyCandidateDetails();
   const { refetch: refetchRegistrationStatus } = useGetMyRegistrationStatus();
 
   // Function to handle successful updates
@@ -30,10 +33,10 @@ export function CandidateDashboard({
   };
 
   useEffect(() => {
-    // Set up an interval to periodically refetch data (less frequently)
+    // Set up an interval to periodically refetch data
     const interval = setInterval(() => {
       refetch();
-    }, 30000); // Reduced to every 30 seconds to be less aggressive
+    }, 30000); // Every 30 seconds
 
     return () => clearInterval(interval);
   }, [refetch]);
@@ -56,16 +59,6 @@ export function CandidateDashboard({
 
   return (
     <div className="space-y-6">
-      {candidateDetails.status === false && (
-        <Alert className="mb-6">
-          <InfoIcon className="h-4 w-4" />
-          <AlertTitle>Your candidacy is inactive</AlertTitle>
-          <AlertDescription>
-            Your candidacy is currently inactive and won&apos;t be visible to voters.
-          </AlertDescription>
-        </Alert>
-      )}
-
       <Card>
         <CardContent className="p-6">
           <CandidateInformation candidateDetails={candidateDetails} />

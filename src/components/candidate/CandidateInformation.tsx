@@ -18,28 +18,40 @@ export function CandidateInformation({
         </div>
 
         <div>
-          <p className="text-sm font-medium text-muted-foreground">Age</p>
-          <p className="text-base">{candidateDetails.age.toString()}</p>
-        </div>
-
-        <div>
           <p className="text-sm font-medium text-muted-foreground">Email</p>
           <p className="text-base">{candidateDetails.email}</p>
         </div>
 
         <div>
-          <p className="text-sm font-medium text-muted-foreground">Vote Count</p>
-          <p className="text-base">{candidateDetails.voteCount.toString()}</p>
+          <p className="text-sm font-medium text-muted-foreground">Age</p>
+          <p className="text-base">{candidateDetails.age.toString()}</p>
+        </div>
+
+        <div>
+          <p className="text-sm font-medium text-muted-foreground">Gender</p>
+          <p className="text-base">{candidateDetails.gender === 0 ? "Male" : "Female"}</p>
+        </div>
+
+        <div className="md:col-span-2">
+          <p className="text-sm font-medium text-muted-foreground">Present Address</p>
+          <p className="text-base">{candidateDetails.presentAddress}</p>
         </div>
 
         <div className="md:col-span-2">
           <p className="text-sm font-medium text-muted-foreground">Qualifications</p>
-          <p className="text-base">{candidateDetails.qualifications}</p>
+          <p className="text-base whitespace-pre-wrap">{candidateDetails.qualifications}</p>
         </div>
 
         <div className="md:col-span-2">
           <p className="text-sm font-medium text-muted-foreground">Manifesto</p>
-          <p className="text-base whitespace-pre-line">{candidateDetails.manifesto}</p>
+          <p className="text-base whitespace-pre-wrap">{candidateDetails.manifesto}</p>
+        </div>
+
+        <div>
+          <p className="text-sm font-medium text-muted-foreground">Registration Date</p>
+          <p className="text-base">
+            {new Date(Number(candidateDetails.registrationTimestamp) * 1000).toLocaleString()}
+          </p>
         </div>
       </div>
     </div>
