@@ -5,7 +5,7 @@ import { Providers } from "./providers";
 import { headers } from "next/headers";
 import { cookieToInitialState } from "wagmi";
 import { config } from "@/wagmi.config";
-import Header from "@/components/Header";
+import Header from "@/components/header/Header";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
 
