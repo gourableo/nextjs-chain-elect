@@ -1,6 +1,6 @@
 {
   "addresses": {
-    "sepolia": "0x177F485C316534D482e150173e354F1c5F6e6F21"
+    "sepolia": "0x5F0cdc5bd3DE340f99733cA80F6A4684E97A8CF1"
   },
   "abi": [
     {
@@ -213,6 +213,16 @@
           "type": "uint256"
         },
         {
+          "internalType": "enum ICandidateDatabase.Gender",
+          "name": "_gender",
+          "type": "uint8"
+        },
+        {
+          "internalType": "string",
+          "name": "_presentAddress",
+          "type": "string"
+        },
+        {
           "internalType": "string",
           "name": "_email",
           "type": "string"
@@ -249,6 +259,16 @@
           "internalType": "uint256",
           "name": "_age",
           "type": "uint256"
+        },
+        {
+          "internalType": "enum ICandidateDatabase.Gender",
+          "name": "_gender",
+          "type": "uint8"
+        },
+        {
+          "internalType": "string",
+          "name": "_presentAddress",
+          "type": "string"
         },
         {
           "internalType": "string",
@@ -336,6 +356,16 @@
           "internalType": "uint256",
           "name": "_age",
           "type": "uint256"
+        },
+        {
+          "internalType": "enum ICandidateDatabase.Gender",
+          "name": "_gender",
+          "type": "uint8"
+        },
+        {
+          "internalType": "string",
+          "name": "_presentAddress",
+          "type": "string"
         },
         {
           "internalType": "string",
@@ -457,6 +487,16 @@
           "type": "uint256"
         },
         {
+          "internalType": "enum ICandidateDatabase.Gender",
+          "name": "gender",
+          "type": "uint8"
+        },
+        {
+          "internalType": "string",
+          "name": "presentAddress",
+          "type": "string"
+        },
+        {
           "internalType": "string",
           "name": "email",
           "type": "string"
@@ -512,6 +552,16 @@
           "internalType": "uint256",
           "name": "age",
           "type": "uint256"
+        },
+        {
+          "internalType": "enum ICandidateDatabase.Gender",
+          "name": "gender",
+          "type": "uint8"
+        },
+        {
+          "internalType": "string",
+          "name": "presentAddress",
+          "type": "string"
         },
         {
           "internalType": "string",
@@ -606,6 +656,16 @@
           "internalType": "uint256",
           "name": "_age",
           "type": "uint256"
+        },
+        {
+          "internalType": "enum ICandidateDatabase.Gender",
+          "name": "_gender",
+          "type": "uint8"
+        },
+        {
+          "internalType": "string",
+          "name": "_presentAddress",
+          "type": "string"
         },
         {
           "internalType": "string",

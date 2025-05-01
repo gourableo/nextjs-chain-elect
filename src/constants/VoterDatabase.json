@@ -1,6 +1,6 @@
 {
   "addresses": {
-    "sepolia": "0x9b34b5bbC64Ca4d6F5814B91ddA4Fa7B04b7E965"
+    "sepolia": "0x870C24Ae4C0092c08c2286eA95ddD961dFDEb440"
   },
   "abi": [
     {
@@ -269,7 +269,7 @@
           "type": "uint256"
         },
         {
-          "internalType": "enum VoterDatabase.Gender",
+          "internalType": "enum IVoterDatabase.Gender",
           "name": "_gender",
           "type": "uint8"
         },
@@ -302,7 +302,7 @@
           "type": "uint256"
         },
         {
-          "internalType": "enum VoterDatabase.Gender",
+          "internalType": "enum IVoterDatabase.Gender",
           "name": "_gender",
           "type": "uint8"
         },
@@ -387,7 +387,7 @@
           "type": "uint256"
         },
         {
-          "internalType": "enum VoterDatabase.Gender",
+          "internalType": "enum IVoterDatabase.Gender",
           "name": "gender",
           "type": "uint8"
         },
@@ -485,7 +485,7 @@
           "type": "uint256"
         },
         {
-          "internalType": "enum VoterDatabase.Gender",
+          "internalType": "enum IVoterDatabase.Gender",
           "name": "_gender",
           "type": "uint8"
         },
@@ -566,7 +566,7 @@
           "type": "uint256"
         },
         {
-          "internalType": "enum VoterDatabase.Gender",
+          "internalType": "enum IVoterDatabase.Gender",
           "name": "gender",
           "type": "uint8"
         },
@@ -675,7 +675,7 @@
           "type": "uint256"
         },
         {
-          "internalType": "enum VoterDatabase.Gender",
+          "internalType": "enum IVoterDatabase.Gender",
           "name": "_gender",
           "type": "uint8"
         },
