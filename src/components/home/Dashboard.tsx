@@ -1,14 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { ChevronRightIcon, VoteIcon, UserIcon, ShieldIcon } from "lucide-react";
 
 export default function Dashboard() {
   return (
-    <section className="py-12 md:py-24 lg:py-32 xl:py-48">
+    <section className="py-12 md:py-24 lg:py-32 xl:py-40">
       <div className="container px-4 md:px-6">
-        <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-          <div className="flex flex-col justify-center space-y-4">
+        <div className="grid gap-8 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_500px]">
+          <div className="flex flex-col justify-center space-y-6">
             <div className="space-y-2">
+              <Badge className="mb-2 inline-block" variant="outline">
+                Blockchain-based voting
+              </Badge>
               <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
                 Secure, Transparent, Decentralized Voting
               </h1>
@@ -17,72 +22,90 @@ export default function Dashboard() {
                 voting for modern elections. Your voice, secured by cryptography.
               </p>
             </div>
-            <div className="flex flex-col gap-2 min-[400px]:flex-row">
-              <Link href="/voter/register">
-                <Button size="lg" className="w-full">
-                  Register as Voter
+            <div className="flex flex-col gap-3 min-[400px]:flex-row">
+              <Link href="/voter" className="w-full">
+                <Button size="lg" className="w-full group" variant="default">
+                  Access Voter Portal
+                  <ChevronRightIcon className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
-              <Link href="/candidate/register">
-                <Button size="lg" variant="outline" className="w-full">
-                  Register as Candidate
+              <Link href="/candidate" className="w-full">
+                <Button size="lg" variant="outline" className="w-full group">
+                  Access Candidate Portal
+                  <ChevronRightIcon className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
             </div>
           </div>
           <div className="flex items-center justify-center">
-            <div className="grid grid-cols-2 gap-4 md:gap-8">
-              <Card className="text-center">
-                <CardHeader className="p-4">
-                  <CardTitle className="text-lg flex justify-center">Voter</CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 pt-0">
-                  <p className="text-sm text-muted-foreground">
-                    Register and cast your votes securely.
-                  </p>
-                </CardContent>
-                <CardFooter className="p-4 pt-0">
-                  <Link href="/voter/login" className="w-full">
-                    <Button variant="secondary" className="w-full">
-                      Voter Login
+            <div className="w-full space-y-4">
+              <Link href="/voter">
+                <Card className="overflow-hidden border-2 transition-all hover:border-primary hover:shadow-lg">
+                  <CardHeader className="bg-muted/50 pb-2">
+                    <div className="flex items-center">
+                      <VoteIcon className="mr-2 h-5 w-5 text-primary" />
+                      <CardTitle className="text-lg">Voter Portal</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-4">
+                    <p className="text-sm text-muted-foreground">
+                      Register as a voter, update your information, or check your voting status.
+                    </p>
+                  </CardContent>
+                  <CardFooter className="bg-muted/20 flex justify-end pt-2">
+                    <Button variant="ghost" className="group text-sm font-medium">
+                      Enter Portal
+                      <ChevronRightIcon className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Button>
-                  </Link>
-                </CardFooter>
-              </Card>
-              <Card className="text-center">
-                <CardHeader className="p-4">
-                  <CardTitle className="text-lg flex justify-center">Candidate</CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 pt-0">
-                  <p className="text-sm text-muted-foreground">
-                    Enter elections and track results.
-                  </p>
-                </CardContent>
-                <CardFooter className="p-4 pt-0">
-                  <Link href="/candidate/login" className="w-full">
-                    <Button variant="secondary" className="w-full">
-                      Candidate Login
+                  </CardFooter>
+                </Card>
+              </Link>
+
+              <Link href="/candidate">
+                <Card className="overflow-hidden border-2 transition-all hover:border-primary hover:shadow-lg">
+                  <CardHeader className="bg-muted/50 pb-2">
+                    <div className="flex items-center">
+                      <UserIcon className="mr-2 h-5 w-5 text-primary" />
+                      <CardTitle className="text-lg">Candidate Portal</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-4">
+                    <p className="text-sm text-muted-foreground">
+                      Register as a candidate, manage your campaign information, and track election
+                      results.
+                    </p>
+                  </CardContent>
+                  <CardFooter className="bg-muted/20 flex justify-end pt-2">
+                    <Button variant="ghost" className="group text-sm font-medium">
+                      Enter Portal
+                      <ChevronRightIcon className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Button>
-                  </Link>
-                </CardFooter>
-              </Card>
-              <Card className="col-span-2 text-center">
-                <CardHeader className="p-4">
-                  <CardTitle className="text-lg flex justify-center">Admin</CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 pt-0">
-                  <p className="text-sm text-muted-foreground">
-                    Manage elections, voters, and candidates.
-                  </p>
-                </CardContent>
-                <CardFooter className="p-4 pt-0">
-                  <Link href="/admin/login" className="w-full">
-                    <Button variant="secondary" className="w-full">
-                      Admin Login
+                  </CardFooter>
+                </Card>
+              </Link>
+
+              <Link href="/admin">
+                <Card className="overflow-hidden border-2 transition-all hover:border-primary hover:shadow-lg">
+                  <CardHeader className="bg-muted/50 pb-2">
+                    <div className="flex items-center">
+                      <ShieldIcon className="mr-2 h-5 w-5 text-primary" />
+                      <CardTitle className="text-lg">Admin Portal</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-4">
+                    <p className="text-sm text-muted-foreground">
+                      Manage elections, oversee voter and candidate registrations, and ensure
+                      system integrity.
+                    </p>
+                  </CardContent>
+                  <CardFooter className="bg-muted/20 flex justify-end pt-2">
+                    <Button variant="ghost" className="group text-sm font-medium">
+                      Enter Portal
+                      <ChevronRightIcon className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Button>
-                  </Link>
-                </CardFooter>
-              </Card>
+                  </CardFooter>
+                </Card>
+              </Link>
             </div>
           </div>
         </div>
