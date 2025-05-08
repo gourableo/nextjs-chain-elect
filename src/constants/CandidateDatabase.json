@@ -1,21 +1,31 @@
 {
   "addresses": {
-    "sepolia": "0x6003cA557d45E08Bb2C572439b8eFC2631D0644F"
+    "sepolia": "0x0f3CB74806185c9Ee5De47213862ac846BB04134"
   },
   "abi": [
     {
       "inputs": [],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "inputs": [],
-      "name": "CandidateDatabase__AdminNotFound",
+      "name": "AdminManagement__AdminNotFound",
       "type": "error"
     },
     {
       "inputs": [],
-      "name": "CandidateDatabase__AlreadyAdmin",
+      "name": "AdminManagement__AlreadyAdmin",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "AdminManagement__InvalidAddress",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "AdminManagement__NotAdmin",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "AdminManagement__NotOwner",
       "type": "error"
     },
     {
@@ -35,17 +45,7 @@
     },
     {
       "inputs": [],
-      "name": "CandidateDatabase__NotAdmin",
-      "type": "error"
-    },
-    {
-      "inputs": [],
       "name": "CandidateDatabase__NotEligible",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "CandidateDatabase__NotOwner",
       "type": "error"
     },
     {
@@ -228,7 +228,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_age",
+          "name": "_dateOfBirthEpoch",
           "type": "uint256"
         },
         {
@@ -276,7 +276,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_age",
+          "name": "_dateOfBirthEpoch",
           "type": "uint256"
         },
         {
@@ -386,7 +386,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_age",
+          "name": "_dateOfBirthEpoch",
           "type": "uint256"
         },
         {
@@ -428,6 +428,25 @@
           "internalType": "bool",
           "name": "",
           "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_dateOfBirthEpoch",
+          "type": "uint256"
+        }
+      ],
+      "name": "calculateAge",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -509,7 +528,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "age",
+          "name": "dateOfBirthEpoch",
           "type": "uint256"
         },
         {
@@ -539,7 +558,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "registrationTimestamp",
+          "name": "timeWhenRegisteredEpoch",
           "type": "uint256"
         }
       ],
@@ -567,6 +586,19 @@
     },
     {
       "inputs": [],
+      "name": "getMyAge",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "getMyCandidateDetails",
       "outputs": [
         {
@@ -576,7 +608,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "age",
+          "name": "dateOfBirthEpoch",
           "type": "uint256"
         },
         {
@@ -606,7 +638,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "registrationTimestamp",
+          "name": "timeWhenRegisteredEpoch",
           "type": "uint256"
         }
       ],
@@ -680,7 +712,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_age",
+          "name": "_dateOfBirthEpoch",
           "type": "uint256"
         },
         {
