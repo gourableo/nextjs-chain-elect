@@ -1,5 +1,3 @@
-"use client";
-
 import { CandidatePortal } from "@/components/candidate/CandidatePortal";
 
 export default function CandidatePage() {

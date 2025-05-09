@@ -1,24 +1,9 @@
 import { useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useAddVoter } from "@/hooks/useVoterDatabase";
-import { Loader2Icon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import {
-  VoterFormSchema,
-  VoterFormValues,
-  voterFormToContractParams,
-} from "@/lib/schemas/voter-form";
+import { Loader2Icon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -27,52 +12,57 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Textarea } from "@/components/ui/textarea";
 import { FormDatePickerControl } from "@/components/ui/custom/form-date-picker";
 
-export function VoterRegistrationForm({
-  onRegistrationSuccessAction,
-}: {
-  onRegistrationSuccessAction: () => void;
-}) {
-  const { addVoter, isPending, isConfirming, isConfirmed } = useAddVoter();
-  const isLoading = isPending || isConfirming;
+import { useUpdateVoter } from "@/hooks/useVoterDatabase";
+import {
+  VoterFormSchema,
+  VoterFormValues,
+  voterFormToContractParams,
+  contractDataToVoterForm,
+} from "@/lib/schemas/voter-form";
+import { VoterDetails } from "@/types";
+
+interface VoterUpdateFormProps {
+  voterDetails: VoterDetails;
+  onSuccess: () => void;
+  onCancel: () => void;
+}
+
+export function VoterUpdateForm({
+  voterDetails,
+  onSuccess,
+  onCancel,
+}: VoterUpdateFormProps) {
+  const { updateVoter, isPending, isConfirming, isConfirmed } = useUpdateVoter();
+  const isProcessing = isPending || isConfirming;
 
   // Define the form
   const form = useForm<VoterFormValues>({
     resolver: valibotResolver(VoterFormSchema),
-    defaultValues: {
-      name: "",
-      dateOfBirth: "",
-      gender: 0,
-      presentAddress: "",
-    },
+    defaultValues: contractDataToVoterForm(voterDetails),
     mode: "onBlur",
   });
 
   // Listen for confirmation
   useEffect(() => {
     if (isConfirmed) {
-      onRegistrationSuccessAction(); // Notify parent component of successful registration
+      onSuccess();
     }
-  }, [isConfirmed, onRegistrationSuccessAction]);
+  }, [isConfirmed, onSuccess]);
 
   async function onSubmit(values: VoterFormValues) {
-    await addVoter(voterFormToContractParams(values));
+    await updateVoter(voterFormToContractParams(values));
   }
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Register as a Voter</CardTitle>
-        <CardDescription>
-          Complete this form to register yourself as a voter in the election.
-        </CardDescription>
-      </CardHeader>
-
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <CardContent className="space-y-6">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div>
+          <div className="grid gap-4 sm:grid-cols-2">
             <FormField
               control={form.control}
               name="name"
@@ -80,7 +70,7 @@ export function VoterRegistrationForm({
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Your full name" {...field} disabled={isLoading} />
+                    <Input {...field} disabled={isProcessing} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -92,11 +82,13 @@ export function VoterRegistrationForm({
               name="dateOfBirth"
               label="Date of Birth"
               placeholder="Select your date of birth"
-              disabled={isLoading}
+              disabled={isProcessing}
               required={true}
               isDateOfBirth={true}
             />
-
+          </div>
+          
+          <div className="mt-4">
             <FormField
               control={form.control}
               name="gender"
@@ -107,18 +99,18 @@ export function VoterRegistrationForm({
                     <RadioGroup
                       value={field.value.toString()}
                       onValueChange={(value) => field.onChange(parseInt(value))}
+                      disabled={isProcessing}
                       className="flex gap-4"
-                      disabled={isLoading}
                     >
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="0" id="male" />
-                        <FormLabel htmlFor="male" className="cursor-pointer">
+                        <RadioGroupItem value="0" id="update-male" />
+                        <FormLabel htmlFor="update-male" className="cursor-pointer">
                           Male
                         </FormLabel>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="1" id="female" />
-                        <FormLabel htmlFor="female" className="cursor-pointer">
+                        <RadioGroupItem value="1" id="update-female" />
+                        <FormLabel htmlFor="update-female" className="cursor-pointer">
                           Female
                         </FormLabel>
                       </div>
@@ -128,7 +120,9 @@ export function VoterRegistrationForm({
                 </FormItem>
               )}
             />
-
+          </div>
+          
+          <div className="mt-4">
             <FormField
               control={form.control}
               name="presentAddress"
@@ -136,31 +130,25 @@ export function VoterRegistrationForm({
                 <FormItem>
                   <FormLabel>Present Address</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="Your current address"
-                      {...field}
-                      disabled={isLoading}
-                      rows={3}
-                    />
+                    <Textarea {...field} disabled={isProcessing} rows={3} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          </CardContent>
+          </div>
+        </div>
 
-          <CardFooter>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading || !form.formState.isValid}
-            >
-              {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
-              {isPending ? "Submitting..." : isConfirming ? "Confirming..." : "Register as Voter"}
-            </Button>
-          </CardFooter>
-        </form>
-      </Form>
-    </Card>
+        <div className="flex justify-end gap-2 pt-4">
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isProcessing}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={isProcessing}>
+            {isProcessing && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+            {isPending ? "Saving..." : isConfirming ? "Confirming..." : "Save Changes"}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }
