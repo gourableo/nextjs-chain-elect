@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useGetMyDetails, useGetMyRegistrationStatus } from "@/hooks/useVoterDatabase";
 import { VoterInformation } from "@/components/voter/VoterInformation";
 import { VoterActions } from "@/components/voter/VoterActions";
@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { InfoIcon } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function VoterDashboard({
   onRegistrationStatusChangeAction,
@@ -16,6 +17,7 @@ export function VoterDashboard({
 }) {
   const { voterDetails, isLoading, isError, refetch } = useGetMyDetails();
   const { refetch: refetchRegistrationStatus } = useGetMyRegistrationStatus();
+  const [activeTab, setActiveTab] = useState("information");
 
   // Function to handle successful updates
   const handleUpdateAction = async () => {
@@ -64,13 +66,24 @@ export function VoterDashboard({
         </Alert>
       )}
 
-      <Card>
-        <CardContent className="p-6">
-          <VoterInformation voterDetails={voterDetails} />
-        </CardContent>
-      </Card>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid grid-cols-2">
+          <TabsTrigger value="information">Information</TabsTrigger>
+          <TabsTrigger value="actions">Actions</TabsTrigger>
+        </TabsList>
 
-      <VoterActions voterDetails={voterDetails} onUpdateAction={handleUpdateAction} />
+        <TabsContent value="information">
+          <Card>
+            <CardContent className="p-6">
+              <VoterInformation voterDetails={voterDetails} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="actions">
+          <VoterActions voterDetails={voterDetails} onUpdateAction={handleUpdateAction} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
