@@ -1,6 +1,7 @@
-import { CandidateContractParams, Gender, GenderEnum } from "@/types";
-import { dateToEpoch, epochToDateString, isAtLeast18YearsOld } from "../utils/date-conversions";
+import { CandidateContractParams, Gender } from "@/types";
+import { epochToDateString } from "@/lib/utils/date-conversions";
 import * as v from "valibot";
+import { convertDateOfBirthToEpoch, createAgeValidation, createGenderValidation } from "./shared";
 
 // Define schema for candidate registration/update form
 export const CandidateFormSchema = v.object({
@@ -9,17 +10,8 @@ export const CandidateFormSchema = v.object({
     v.minLength(3, "Name must be at least 3 characters"),
     v.maxLength(100, "Name must be less than 100 characters"),
   ),
-  dateOfBirth: v.pipe(
-    v.string("Date of birth is required"),
-    v.minLength(1, "Date of birth is required"),
-    v.custom(
-      (val) => isAtLeast18YearsOld(val),
-      "You must be at least 18 years old to be a candidate",
-    ),
-  ),
-  gender: v.pipe(
-    v.picklist([GenderEnum.MALE, GenderEnum.FEMALE] as const, "Please select a gender"),
-  ),
+  dateOfBirth: createAgeValidation("You must be at least 18 years old to be a candidate"),
+  gender: createGenderValidation(),
   presentAddress: v.pipe(
     v.string(),
     v.minLength(5, "Address must be at least 5 characters"),
@@ -50,10 +42,7 @@ export type CandidateFormValues = v.InferOutput<typeof CandidateFormSchema>;
 export function candidateFormToContractParams(
   formValues: CandidateFormValues,
 ): CandidateContractParams {
-  return {
-    ...formValues,
-    dateOfBirthEpoch: dateToEpoch(formValues.dateOfBirth),
-  };
+  return convertDateOfBirthToEpoch(formValues) as CandidateContractParams;
 }
 
 /**

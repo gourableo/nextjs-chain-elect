@@ -9,6 +9,17 @@ export function dateToEpoch(dateString: string): bigint {
 }
 
 /**
+ * Converts a string to a Date object
+ * @param dateInput Date string or undefined
+ * @returns Date object or undefined if invalid
+ */
+export function stringToDate(dateInput: string | undefined | null): Date | undefined {
+  if (!dateInput) return undefined;
+  const date = new Date(dateInput);
+  return isNaN(date.getTime()) ? undefined : date;
+}
+
+/**
  * Converts a Unix timestamp (epoch) to a date string
  * @param epoch Unix timestamp (seconds since epoch)
  * @returns Date string in YYYY-MM-DD format

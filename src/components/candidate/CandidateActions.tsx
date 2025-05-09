@@ -34,7 +34,6 @@ import {
   candidateFormToContractParams,
   contractDataToCandidateForm,
 } from "@/lib/schemas/candidate-form";
-import { getMaxDateOfBirth } from "@/lib/utils/date-conversions";
 import {
   Form,
   FormControl,
@@ -43,6 +42,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { FormDatePickerControl } from "@/components/ui/custom/form-date-picker";
 import { CandidateDetails } from "@/types";
 
 export function CandidateActions({
@@ -205,23 +205,14 @@ function UpdateCandidateDialog({
               )}
             />
 
-            <FormField
+            <FormDatePickerControl
               control={form.control}
               name="dateOfBirth"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Date of Birth</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="date"
-                      max={getMaxDateOfBirth()}
-                      {...field}
-                      disabled={isProcessing}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Date of Birth"
+              placeholder="Select your date of birth"
+              disabled={isProcessing}
+              required={true}
+              isDateOfBirth={true}
             />
 
             <FormField

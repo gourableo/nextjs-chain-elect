@@ -14,8 +14,11 @@ import { useAddVoter } from "@/hooks/useVoterDatabase";
 import { Loader2Icon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { VoterFormSchema, VoterFormValues, voterFormToContractParams } from "@/lib/schemas/voter-form";
-import { getMaxDateOfBirth } from "@/lib/utils/date-conversions";
+import {
+  VoterFormSchema,
+  VoterFormValues,
+  voterFormToContractParams,
+} from "@/lib/schemas/voter-form";
 import {
   Form,
   FormControl,
@@ -25,6 +28,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { FormDatePickerControl } from "@/components/ui/custom/form-date-picker";
 
 export function VoterRegistrationForm({
   onRegistrationSuccessAction,
@@ -83,23 +87,14 @@ export function VoterRegistrationForm({
               )}
             />
 
-            <FormField
+            <FormDatePickerControl
               control={form.control}
               name="dateOfBirth"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Date of Birth</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="date"
-                      max={getMaxDateOfBirth()}
-                      {...field}
-                      disabled={isLoading}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Date of Birth"
+              placeholder="Select your date of birth"
+              disabled={isLoading}
+              required={true}
+              isDateOfBirth={true}
             />
 
             <FormField

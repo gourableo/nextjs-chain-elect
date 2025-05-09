@@ -14,12 +14,11 @@ import { useAddCandidate } from "@/hooks/useCandidateDatabase";
 import { Loader2Icon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { 
-  CandidateFormSchema, 
+import {
+  CandidateFormSchema,
   CandidateFormValues,
-  candidateFormToContractParams
+  candidateFormToContractParams,
 } from "@/lib/schemas/candidate-form";
-import { getMaxDateOfBirth } from "@/lib/utils/date-conversions";
 import {
   Form,
   FormControl,
@@ -29,6 +28,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { FormDatePickerControl } from "@/components/ui/custom/form-date-picker";
 
 export function CandidateRegistrationForm({
   onRegistrationSuccessAction,
@@ -109,23 +109,14 @@ export function CandidateRegistrationForm({
               )}
             />
 
-            <FormField
+            <FormDatePickerControl
               control={form.control}
               name="dateOfBirth"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Date of Birth</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="date"
-                      max={getMaxDateOfBirth()}
-                      {...field}
-                      disabled={isLoading}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label="Date of Birth"
+              placeholder="Select your date of birth"
+              disabled={isLoading}
+              required={true}
+              isDateOfBirth={true}
             />
 
             <FormField
