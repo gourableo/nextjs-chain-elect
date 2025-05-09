@@ -1,4 +1,5 @@
-import { GenderEnum } from "@/types";
+import { CandidateContractParams, Gender, GenderEnum } from "@/types";
+import { dateToEpoch, epochToDateString, isAtLeast18YearsOld } from "../utils/date-conversions";
 import * as v from "valibot";
 
 // Define schema for candidate registration/update form
@@ -8,11 +9,13 @@ export const CandidateFormSchema = v.object({
     v.minLength(3, "Name must be at least 3 characters"),
     v.maxLength(100, "Name must be less than 100 characters"),
   ),
-  age: v.pipe(
-    v.number(),
-    v.integer("Age must be a whole number"),
-    v.minValue(18, "You must be at least 18 years old to be a candidate"),
-    v.maxValue(120, "Please enter a valid age"),
+  dateOfBirth: v.pipe(
+    v.string("Date of birth is required"),
+    v.minLength(1, "Date of birth is required"),
+    v.custom(
+      (val) => isAtLeast18YearsOld(val),
+      "You must be at least 18 years old to be a candidate",
+    ),
   ),
   gender: v.pipe(
     v.picklist([GenderEnum.MALE, GenderEnum.FEMALE] as const, "Please select a gender"),
@@ -40,3 +43,40 @@ export const CandidateFormSchema = v.object({
 });
 
 export type CandidateFormValues = v.InferOutput<typeof CandidateFormSchema>;
+
+/**
+ * Converts CandidateFormValues to CandidateContractParams by converting dateOfBirth to dateOfBirthEpoch
+ */
+export function candidateFormToContractParams(
+  formValues: CandidateFormValues,
+): CandidateContractParams {
+  return {
+    ...formValues,
+    dateOfBirthEpoch: dateToEpoch(formValues.dateOfBirth),
+  };
+}
+
+/**
+ * Converts CandidateDetails from the contract to form values for the UI
+ * @param contractData The candidate details from the contract
+ * @returns Form values suitable for the UI form
+ */
+export function contractDataToCandidateForm(contractData: {
+  name: string;
+  dateOfBirthEpoch: bigint;
+  gender: number;
+  presentAddress: string;
+  email: string;
+  qualifications: string;
+  manifesto: string;
+}): CandidateFormValues {
+  return {
+    name: contractData.name,
+    dateOfBirth: epochToDateString(contractData.dateOfBirthEpoch),
+    gender: contractData.gender as Gender,
+    presentAddress: contractData.presentAddress,
+    email: contractData.email,
+    qualifications: contractData.qualifications,
+    manifesto: contractData.manifesto,
+  };
+}

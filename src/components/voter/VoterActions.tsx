@@ -28,7 +28,13 @@ import { useDeleteVoter, useUpdateVoter } from "@/hooks/useVoterDatabase";
 import { Loader2Icon, PencilIcon, Trash2Icon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { VoterFormSchema, VoterFormValues } from "@/lib/schemas/voter-form";
+import {
+  VoterFormSchema,
+  VoterFormValues,
+  voterFormToContractParams,
+  contractDataToVoterForm,
+} from "@/lib/schemas/voter-form";
+import { getMaxDateOfBirth } from "@/lib/utils/date-conversions";
 import {
   Form,
   FormControl,
@@ -37,7 +43,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Gender, VoterDetails } from "@/types";
+import { VoterDetails } from "@/types";
 
 export function VoterActions({
   voterDetails,
@@ -145,12 +151,7 @@ function UpdateVoterDialog({
   // Define the form
   const form = useForm<VoterFormValues>({
     resolver: valibotResolver(VoterFormSchema),
-    defaultValues: {
-      name: voterDetails.name,
-      age: Number(voterDetails.age),
-      gender: voterDetails.gender,
-      presentAddress: voterDetails.presentAddress,
-    },
+    defaultValues: contractDataToVoterForm(voterDetails),
     mode: "onBlur",
   });
 
@@ -163,12 +164,7 @@ function UpdateVoterDialog({
   }, [isConfirmed, onUpdateAction, onClose]);
 
   async function onSubmit(values: VoterFormValues) {
-    await updateVoter({
-      name: values.name,
-      age: values.age,
-      gender: values.gender as Gender,
-      presentAddress: values.presentAddress,
-    });
+    await updateVoter(voterFormToContractParams(values));
   }
 
   return (
@@ -197,27 +193,15 @@ function UpdateVoterDialog({
 
             <FormField
               control={form.control}
-              name="age"
+              name="dateOfBirth"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Age</FormLabel>
+                  <FormLabel>Date of Birth</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
-                      min="18"
-                      step="1"
-                      onKeyDown={(e) => {
-                        // Block decimal point (.) input
-                        if (e.key === "." || e.key === ",") {
-                          e.preventDefault();
-                        }
-                      }}
+                      type="date"
+                      max={getMaxDateOfBirth()}
                       {...field}
-                      onChange={(e) => {
-                        // Convert to integer by dropping any decimals
-                        const value = parseInt(e.target.value);
-                        field.onChange(isNaN(value) ? "" : value);
-                      }}
                       disabled={isProcessing}
                     />
                   </FormControl>

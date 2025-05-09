@@ -20,33 +20,34 @@ export type Gender = (typeof GenderEnum)[keyof typeof GenderEnum];
 
 export type VoterContractParams = {
   name: string;
-  age: number;
+  dateOfBirthEpoch: bigint;
   gender: Gender;
   presentAddress: string;
 };
 
 export type VoterDetails = {
   name: string;
-  age: bigint;
+  dateOfBirthEpoch: bigint;
   gender: Gender;
   presentAddress: string;
   hasVoted: boolean;
+  timeWhenRegisteredEpoch?: bigint;
 };
 
 export type CandidateDetails = {
   name: string;
-  age: bigint;
+  dateOfBirthEpoch: bigint;
   gender: Gender;
   presentAddress: string;
   email: string;
   qualifications: string;
   manifesto: string;
-  registrationTimestamp: bigint;
+  timeWhenRegisteredEpoch: bigint;
 };
 
 export type CandidateContractParams = {
   name: string;
-  age: number;
+  dateOfBirthEpoch: bigint;
   gender: Gender;
   presentAddress: string;
   email: string;

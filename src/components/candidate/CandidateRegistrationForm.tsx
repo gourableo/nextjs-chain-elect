@@ -14,7 +14,12 @@ import { useAddCandidate } from "@/hooks/useCandidateDatabase";
 import { Loader2Icon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { CandidateFormSchema, CandidateFormValues } from "@/lib/schemas/candidate-form";
+import { 
+  CandidateFormSchema, 
+  CandidateFormValues,
+  candidateFormToContractParams
+} from "@/lib/schemas/candidate-form";
+import { getMaxDateOfBirth } from "@/lib/utils/date-conversions";
 import {
   Form,
   FormControl,
@@ -38,7 +43,7 @@ export function CandidateRegistrationForm({
     resolver: valibotResolver(CandidateFormSchema),
     defaultValues: {
       name: "",
-      age: undefined,
+      dateOfBirth: "",
       gender: 0,
       presentAddress: "",
       email: "",
@@ -56,15 +61,7 @@ export function CandidateRegistrationForm({
   }, [isConfirmed, onRegistrationSuccessAction]);
 
   async function onSubmit(values: CandidateFormValues) {
-    await addCandidate({
-      name: values.name,
-      age: values.age,
-      gender: values.gender,
-      presentAddress: values.presentAddress,
-      email: values.email,
-      qualifications: values.qualifications,
-      manifesto: values.manifesto,
-    });
+    await addCandidate(candidateFormToContractParams(values));
   }
 
   return (
@@ -114,28 +111,15 @@ export function CandidateRegistrationForm({
 
             <FormField
               control={form.control}
-              name="age"
+              name="dateOfBirth"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Age</FormLabel>
+                  <FormLabel>Date of Birth</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
-                      placeholder="Your age (must be 18+)"
-                      min="18"
-                      step="1"
-                      onKeyDown={(e) => {
-                        // Block decimal point (.) input
-                        if (e.key === "." || e.key === ",") {
-                          e.preventDefault();
-                        }
-                      }}
-                      value={field.value || ""}
-                      onChange={(e) => {
-                        // Convert to integer by dropping any decimals
-                        const value = parseInt(e.target.value);
-                        field.onChange(isNaN(value) ? undefined : value);
-                      }}
+                      type="date"
+                      max={getMaxDateOfBirth()}
+                      {...field}
                       disabled={isLoading}
                     />
                   </FormControl>

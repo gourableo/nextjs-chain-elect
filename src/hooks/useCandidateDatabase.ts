@@ -118,14 +118,14 @@ export function useAddCandidate() {
 
   const addCandidate = async ({
     name,
-    age,
+    dateOfBirthEpoch,
     gender,
     presentAddress,
     email,
     qualifications,
     manifesto,
   }: CandidateContractParams) => {
-    return execute([name, BigInt(age), gender, presentAddress, email, qualifications, manifesto], {
+    return execute([name, dateOfBirthEpoch, gender, presentAddress, email, qualifications, manifesto], {
       loading: "Submitting candidate registration...",
       success: "Registration submitted! Waiting for blockchain confirmation...",
       error: "Failed to register as candidate",
@@ -148,14 +148,14 @@ export function useUpdateCandidate() {
 
   const updateCandidate = async ({
     name,
-    age,
+    dateOfBirthEpoch,
     gender,
     presentAddress,
     email,
     qualifications,
     manifesto,
   }: CandidateContractParams) => {
-    return execute([name, BigInt(age), gender, presentAddress, email, qualifications, manifesto], {
+    return execute([name, dateOfBirthEpoch, gender, presentAddress, email, qualifications, manifesto], {
       loading: "Updating candidate information...",
       success: "Update submitted! Waiting for blockchain confirmation...",
       error: "Failed to update candidate information",
@@ -204,13 +204,13 @@ export function useGetMyCandidateDetails() {
   const formattedData: CandidateDetails | undefined = data
     ? {
         name: data[0],
-        age: data[1],
+        dateOfBirthEpoch: data[1],
         gender: data[2],
         presentAddress: data[3],
         email: data[4],
         qualifications: data[5],
         manifesto: data[6],
-        registrationTimestamp: data[7],
+        timeWhenRegisteredEpoch: data[7],
       }
     : undefined;
 
@@ -230,13 +230,13 @@ export function useGetCandidateDetails(candidateAddress: `0x${string}` | undefin
   const formattedData: CandidateDetails | undefined = data
     ? {
         name: data[0],
-        age: data[1],
+        dateOfBirthEpoch: data[1],
         gender: data[2],
         presentAddress: data[3],
         email: data[4],
         qualifications: data[5],
         manifesto: data[6],
-        registrationTimestamp: data[7],
+        timeWhenRegisteredEpoch: data[7],
       }
     : undefined;
 
@@ -296,7 +296,7 @@ export function useAdminAddCandidate() {
     candidateAddress: `0x${string}`,
     {
       name,
-      age,
+      dateOfBirthEpoch,
       gender,
       presentAddress,
       email,
@@ -307,7 +307,7 @@ export function useAdminAddCandidate() {
     return execute([
       candidateAddress,
       name,
-      BigInt(age),
+      dateOfBirthEpoch,
       gender,
       presentAddress,
       email,
@@ -333,7 +333,7 @@ export function useAdminUpdateCandidate() {
     candidateAddress: `0x${string}`,
     {
       name,
-      age,
+      dateOfBirthEpoch,
       gender,
       presentAddress,
       email,
@@ -344,7 +344,7 @@ export function useAdminUpdateCandidate() {
     return execute([
       candidateAddress,
       name,
-      BigInt(age),
+      dateOfBirthEpoch,
       gender,
       presentAddress,
       email,

@@ -1,8 +1,12 @@
 "use client";
 
 import { VoterDetails } from "@/types";
+import { calculateAge, epochToDateString } from "@/lib/utils/date-conversions";
 
 export function VoterInformation({ voterDetails }: { voterDetails: VoterDetails }) {
+  // Calculate age from dateOfBirthEpoch
+  const age = calculateAge(voterDetails.dateOfBirthEpoch);
+  
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold">Your Voter Information</h2>
@@ -14,8 +18,13 @@ export function VoterInformation({ voterDetails }: { voterDetails: VoterDetails 
         </div>
 
         <div>
+          <p className="text-sm font-medium text-muted-foreground">Date of Birth</p>
+          <p className="text-base">{epochToDateString(voterDetails.dateOfBirthEpoch)}</p>
+        </div>
+        
+        <div>
           <p className="text-sm font-medium text-muted-foreground">Age</p>
-          <p className="text-base">{voterDetails.age.toString()}</p>
+          <p className="text-base">{age.toString()} years</p>
         </div>
 
         <div>

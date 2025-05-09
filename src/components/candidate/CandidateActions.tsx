@@ -28,7 +28,13 @@ import { useDeleteCandidate, useUpdateCandidate } from "@/hooks/useCandidateData
 import { Loader2Icon, PencilIcon, Trash2Icon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { CandidateFormSchema, CandidateFormValues } from "@/lib/schemas/candidate-form";
+import {
+  CandidateFormSchema,
+  CandidateFormValues,
+  candidateFormToContractParams,
+  contractDataToCandidateForm,
+} from "@/lib/schemas/candidate-form";
+import { getMaxDateOfBirth } from "@/lib/utils/date-conversions";
 import {
   Form,
   FormControl,
@@ -37,7 +43,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { CandidateDetails, Gender } from "@/types";
+import { CandidateDetails } from "@/types";
 
 export function CandidateActions({
   candidateDetails,
@@ -145,15 +151,7 @@ function UpdateCandidateDialog({
   // Define the form
   const form = useForm<CandidateFormValues>({
     resolver: valibotResolver(CandidateFormSchema),
-    defaultValues: {
-      name: candidateDetails.name,
-      age: Number(candidateDetails.age),
-      gender: candidateDetails.gender,
-      presentAddress: candidateDetails.presentAddress,
-      email: candidateDetails.email,
-      qualifications: candidateDetails.qualifications,
-      manifesto: candidateDetails.manifesto,
-    },
+    defaultValues: contractDataToCandidateForm(candidateDetails),
     mode: "onBlur",
   });
 
@@ -166,15 +164,7 @@ function UpdateCandidateDialog({
   }, [isConfirmed, onUpdateAction, onClose]);
 
   async function onSubmit(values: CandidateFormValues) {
-    await updateCandidate({
-      name: values.name,
-      age: values.age,
-      gender: values.gender as Gender,
-      presentAddress: values.presentAddress,
-      email: values.email,
-      qualifications: values.qualifications,
-      manifesto: values.manifesto,
-    });
+    await updateCandidate(candidateFormToContractParams(values));
   }
 
   return (
@@ -217,27 +207,15 @@ function UpdateCandidateDialog({
 
             <FormField
               control={form.control}
-              name="age"
+              name="dateOfBirth"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Age</FormLabel>
+                  <FormLabel>Date of Birth</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
-                      min="18"
-                      step="1"
-                      onKeyDown={(e) => {
-                        // Block decimal point (.) input
-                        if (e.key === "." || e.key === ",") {
-                          e.preventDefault();
-                        }
-                      }}
+                      type="date"
+                      max={getMaxDateOfBirth()}
                       {...field}
-                      onChange={(e) => {
-                        // Convert to integer by dropping any decimals
-                        const value = parseInt(e.target.value);
-                        field.onChange(isNaN(value) ? "" : value);
-                      }}
                       disabled={isProcessing}
                     />
                   </FormControl>

@@ -116,8 +116,8 @@ export function useAddVoter() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
     useVoterDatabaseWriteFunction("addVoter");
 
-  const addVoter = async ({ name, age, gender, presentAddress }: VoterContractParams) => {
-    return execute([name, BigInt(age), gender, presentAddress], {
+  const addVoter = async ({ name, dateOfBirthEpoch, gender, presentAddress }: VoterContractParams) => {
+    return execute([name, dateOfBirthEpoch, gender, presentAddress], {
       loading: "Submitting voter registration...",
       success: "Registration submitted! Waiting for blockchain confirmation...",
       error: "Failed to register as voter",
@@ -138,8 +138,8 @@ export function useUpdateVoter() {
   const { execute, isPending, isConfirming, isConfirmed, hash } =
     useVoterDatabaseWriteFunction("updateVoter");
 
-  const updateVoter = async ({ name, age, gender, presentAddress }: VoterContractParams) => {
-    return execute([name, BigInt(age), gender, presentAddress], {
+  const updateVoter = async ({ name, dateOfBirthEpoch, gender, presentAddress }: VoterContractParams) => {
+    return execute([name, dateOfBirthEpoch, gender, presentAddress], {
       loading: "Updating voter information...",
       success: "Update submitted! Waiting for blockchain confirmation...",
       error: "Failed to update voter information",
@@ -203,7 +203,7 @@ export function useGetMyDetails() {
   const formattedData: VoterDetails | undefined = data
     ? {
         name: data[0],
-        age: data[1],
+        dateOfBirthEpoch: data[1],
         gender: data[2],
         presentAddress: data[3],
         hasVoted: data[4],
@@ -261,10 +261,10 @@ export function useAdminAddVoter() {
 
   const adminAddVoter = async (
     voterAddress: `0x${string}`,
-    { name, age, gender, presentAddress }: VoterContractParams,
+    { name, dateOfBirthEpoch, gender, presentAddress }: VoterContractParams,
     hasVoted: boolean = false,
   ) => {
-    return execute([voterAddress, name, BigInt(age), gender, presentAddress, hasVoted]);
+    return execute([voterAddress, name, dateOfBirthEpoch, gender, presentAddress, hasVoted]);
   };
 
   return {
@@ -282,10 +282,10 @@ export function useAdminUpdateVoter() {
 
   const adminUpdateVoter = async (
     voterAddress: `0x${string}`,
-    { name, age, gender, presentAddress }: VoterContractParams,
+    { name, dateOfBirthEpoch, gender, presentAddress }: VoterContractParams,
     hasVoted: boolean,
   ) => {
-    return execute([voterAddress, name, BigInt(age), gender, presentAddress, hasVoted]);
+    return execute([voterAddress, name, dateOfBirthEpoch, gender, presentAddress, hasVoted]);
   };
 
   return {
@@ -334,16 +334,17 @@ export function useAdminSetVotingStatus() {
 // Admin Data Reading
 export function useAdminGetVoterDetails(voterAddress: `0x${string}` | undefined) {
   const { data, isLoading, isError, refetch } = useVoterDatabaseReadFunction<
-    [string, bigint, Gender, string, boolean]
+    [string, bigint, Gender, string, boolean, bigint]
   >("adminGetVoterDetails", voterAddress ? [voterAddress] : undefined);
 
   const formattedData: VoterDetails | undefined = data
     ? {
         name: data[0],
-        age: data[1],
+        dateOfBirthEpoch: data[1],
         gender: data[2],
         presentAddress: data[3],
         hasVoted: data[4],
+        timeWhenRegisteredEpoch: data[5],
       }
     : undefined;
 

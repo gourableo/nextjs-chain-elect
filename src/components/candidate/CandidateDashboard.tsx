@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { InfoIcon } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function CandidateDashboard({
   onRegistrationStatusChangeAction,
@@ -59,13 +60,39 @@ export function CandidateDashboard({
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardContent className="p-6">
-          <CandidateInformation candidateDetails={candidateDetails} />
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="profile" className="w-full">
+        <TabsList className="grid grid-cols-3">
+          <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="manifesto">Manifesto</TabsTrigger>
+          <TabsTrigger value="actions">Actions</TabsTrigger>
+        </TabsList>
 
-      <CandidateActions candidateDetails={candidateDetails} onUpdateAction={handleUpdateAction} />
+        <TabsContent value="profile">
+          <Card>
+            <CardContent className="p-6">
+              <CandidateInformation 
+                candidateDetails={candidateDetails}
+                view="full"
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="manifesto">
+          <Card>
+            <CardContent className="p-6">
+              <CandidateInformation 
+                candidateDetails={candidateDetails}
+                view="manifesto"
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="actions">
+          <CandidateActions candidateDetails={candidateDetails} onUpdateAction={handleUpdateAction} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
